@@ -2,7 +2,7 @@
 #include "afxcmn.h"
 
 
-// CTipStatic
+// CTipStatic 
 
 class CTipStatic : public CStatic
 {
