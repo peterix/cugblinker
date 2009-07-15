@@ -29,6 +29,7 @@ void CLinkerPage::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CLinkerPage, CPropertyPage)
+	ON_STN_CLICKED(IDC_STATIC_ID, &CLinkerPage::OnStnClickedStaticId)
 END_MESSAGE_MAP()
 
 
@@ -45,4 +46,10 @@ BOOL CLinkerPage::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
+}
+
+void CLinkerPage::OnStnClickedStaticId()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	MessageBox(L"Clicked");
 }

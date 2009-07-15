@@ -28,4 +28,5 @@ public:
 	// 帐号下拉列表
 	CAdvComboBox m_cboID;
 	CTipStatic m_lblID;
+	afx_msg void OnStnClickedStaticId();
 };
