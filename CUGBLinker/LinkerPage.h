@@ -1,6 +1,8 @@
 #pragma once
 #include "advcombobox.h"
 #include "tipstatic.h"
+#include "afxwin.h"
+#include "afxsock.h"
 
 
 // CLinkerPage 对话框
@@ -29,4 +31,10 @@ public:
 	CAdvComboBox m_cboID;
 	CTipStatic m_lblID;
 	afx_msg void OnStnClickedStaticId();
+	CButton m_btnConnect;
+	CButton m_btnDisConnect;
+	afx_msg void OnBnClickedButtonCon();
+private:
+	// //用于连接的Socket
+	CSocket m_socket;
 };
