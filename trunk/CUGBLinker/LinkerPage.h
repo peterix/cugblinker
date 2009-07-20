@@ -36,5 +36,5 @@ public:
 	afx_msg void OnBnClickedButtonCon();
 private:
 	// //用于连接的Socket
-	CSocket m_socket;
+	CSocket *m_pSocket;
 };
