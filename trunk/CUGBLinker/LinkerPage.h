@@ -37,4 +37,11 @@ public:
 private:
 	// //用于连接的Socket
 	CSocket *m_pSocket;
+public:
+	afx_msg void OnCbnEditchangeComboId();
+	afx_msg void OnCbnSelchangeComboId();
+	afx_msg void OnEnChangeEditPwd();
+	void CheckEditChange(void);
+	CString m_strID;
+	CString m_strPwd;
 };
