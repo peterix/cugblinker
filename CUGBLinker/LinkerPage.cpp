@@ -12,6 +12,8 @@ IMPLEMENT_DYNAMIC(CLinkerPage, CPropertyPage)
 
 CLinkerPage::CLinkerPage()
 	: CPropertyPage(CLinkerPage::IDD)
+	, m_strID(_T(""))
+	, m_strPwd(_T(""))
 {
 
 }
@@ -27,12 +29,17 @@ void CLinkerPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC_ID, m_lblID);
 	DDX_Control(pDX, IDC_BUTTON_CON, m_btnConnect);
 	DDX_Control(pDX, IDC_BUTTON_DISCON, m_btnDisConnect);
+	DDX_CBString(pDX, IDC_COMBO_ID, m_strID);
+	DDX_Text(pDX, IDC_EDIT_PWD, m_strPwd);
 }
 
 
 BEGIN_MESSAGE_MAP(CLinkerPage, CPropertyPage)
 	ON_STN_CLICKED(IDC_STATIC_ID, &CLinkerPage::OnStnClickedStaticId)
 	ON_BN_CLICKED(IDC_BUTTON_CON, &CLinkerPage::OnBnClickedButtonCon)
+	ON_CBN_EDITCHANGE(IDC_COMBO_ID, &CLinkerPage::OnCbnEditchangeComboId)
+ON_CBN_SELCHANGE(IDC_COMBO_ID, &CLinkerPage::OnCbnSelchangeComboId)
+ON_EN_CHANGE(IDC_EDIT_PWD, &CLinkerPage::OnEnChangeEditPwd)
 END_MESSAGE_MAP()
 
 
@@ -50,6 +57,9 @@ BOOL CLinkerPage::OnInitDialog()
 	m_cboID.AddString(L"080520s");
 	m_cboID.AddString(L"4104211");
 
+	// 更新界面，设置按钮的可用状态
+	UpdateData(FALSE);
+	CheckEditChange();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
 }
@@ -91,4 +101,42 @@ void CLinkerPage::OnBnClickedButtonCon()
  	}
  	recStr.ReleaseBuffer();
 	delete m_pSocket;
+}
+
+void CLinkerPage::OnCbnEditchangeComboId()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CheckEditChange();
+}
+
+void CLinkerPage::OnCbnSelchangeComboId()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CheckEditChange();
+}
+
+void CLinkerPage::OnEnChangeEditPwd()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，则它将不会
+	// 发送该通知，除非重写 CPropertyPage::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+	CheckEditChange();
+}
+
+void CLinkerPage::CheckEditChange(void)
+{
+	UpdateData(TRUE);
+	if (m_strID!="" && m_strPwd!="")
+	{
+		m_btnConnect.EnableWindow(TRUE);
+		m_btnDisConnect.EnableWindow(TRUE);
+	}
+	else
+	{
+		m_btnConnect.EnableWindow(FALSE);
+		m_btnDisConnect.EnableWindow(FALSE);
+	}
 }
