@@ -32,7 +32,8 @@ public:
 	CTipStatic m_lblID;		// 帐号管理
 	CAdvComboBox m_cboID;	// 帐号
 	CEdit m_txtPwd;			// 密码
-	CButton m_rdoRange;		// 访问范围
+	CButton m_rdoRangeIn;	// 访问范围国内
+	CButton m_rdoRangeOut;	// 访问范围国外
 	CButton m_chkAutoStart; // 随系统启动
 	CButton m_chkAutoCon;	// 自动连接
 	CButton m_chkSavePwd;	// 是否保存密码
