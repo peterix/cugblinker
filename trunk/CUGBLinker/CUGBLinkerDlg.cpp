@@ -45,8 +45,12 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	
+	// 添加连接界面
 	m_sheet.AddPage(&m_linkerPage);
-	m_sheet.AddPage(&m_trafficPage);
+	// 添加流量统计界面
+	//m_sheet.AddPage(&m_trafficPage);
+
 	m_sheet.Create(this, WS_CHILD | WS_VISIBLE, WS_EX_CONTROLPARENT);
 	//调整TabControl大小
 	//需进一步调整

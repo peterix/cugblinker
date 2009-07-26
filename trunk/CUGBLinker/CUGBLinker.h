@@ -26,7 +26,7 @@ public:
 // 实现
 
 // 帐号信息
-	CAccountInfo curAccount;
+	CArray<CAccountInfo> accounts;
 
 	DECLARE_MESSAGE_MAP()
 };
