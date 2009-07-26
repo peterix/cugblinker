@@ -27,6 +27,8 @@ public:
 
 // 帐号信息
 	CArray<CAccountInfo> accounts;
+	// 当前用户
+	int curAccount;
 
 	DECLARE_MESSAGE_MAP()
 };

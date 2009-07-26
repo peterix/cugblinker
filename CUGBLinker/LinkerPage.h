@@ -3,6 +3,7 @@
 #include "tipstatic.h"
 #include "afxwin.h"
 #include "afxsock.h"
+#include "accountinfo.h"
 
 
 // CLinkerPage 对话框
@@ -27,21 +28,37 @@ public:
 
 // 界面控件对象
 public:
-	// 帐号下拉列表
-	CAdvComboBox m_cboID;
-	CTipStatic m_lblID;
-	afx_msg void OnStnClickedStaticId();
-	CButton m_btnConnect;
-	CButton m_btnDisConnect;
-	afx_msg void OnBnClickedButtonCon();
+	// 控件对象
+	CTipStatic m_lblID;		// 帐号管理
+	CAdvComboBox m_cboID;	// 帐号
+	CEdit m_txtPwd;			// 密码
+	CButton m_rdoRange;		// 访问范围
+	CButton m_chkAutoStart; // 随系统启动
+	CButton m_chkAutoCon;	// 自动连接
+	CButton m_chkSavePwd;	// 是否保存密码
+	CEdit m_txtInfo;		// 连接信息
+	CButton m_btnConnect;	// 连接按钮
+	CSplitButton m_btnDisCon; // 断开按钮
+
+	// 当前帐号
+	CAccountInfo curAccount;
 private:
-	// //用于连接的Socket
+	// 用于连接的Socket
 	CSocket *m_pSocket;
+	// 全部断开还是只断开当前连接
+	bool m_bDisconAll;
 public:
+	void SetBtnStat(void);
+	void SetItemText(void);
+	afx_msg void OnStnClickedStaticId();
+	afx_msg void OnBnClickedButtonCon();
 	afx_msg void OnCbnEditchangeComboId();
 	afx_msg void OnCbnSelchangeComboId();
 	afx_msg void OnEnChangeEditPwd();
-	void CheckEditChange(void);
-	CString m_strID;
-	CString m_strPwd;
+	afx_msg void OnMenuDiscon();
+	afx_msg void OnMenuDisconAll();
+	afx_msg void OnUpdateDiscon(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateDisconall(CCmdUI *pCmdUI);
+	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
+	afx_msg void OnBnClickedButtonDiscon();
 };
