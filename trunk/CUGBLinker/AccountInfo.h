@@ -18,4 +18,5 @@ public:
 	long	m_maxTraffic;	//流量控制阈值
 	bool	m_showTip;		//超流量时是否提示
 	bool	m_autoDis;		//超流量时是否自动断网
+	CAccountInfo& operator=(const CAccountInfo& rhs);
 };

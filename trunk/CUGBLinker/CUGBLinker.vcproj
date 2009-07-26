@@ -10,7 +10,7 @@
 	SccLocalPath="Svn"
 	SccProvider="SubversionScc"
 	Keyword="MFCProj"
-	TargetFrameworkVersion="131072"
+	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -25,7 +25,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			UseOfMFC="1"
+			UseOfMFC="2"
 			CharacterSet="1"
 			>
 			<Tool
@@ -44,7 +44,7 @@
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="false"
-				ValidateParameters="false"
+				ValidateParameters="true"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -52,7 +52,7 @@
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
@@ -128,7 +128,7 @@
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
 				MkTypLibCompatible="false"
-				ValidateParameters="false"
+				ValidateParameters="true"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
@@ -290,6 +290,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\targetver.h"
 				>
 			</File>
 			<File
