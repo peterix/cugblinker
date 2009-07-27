@@ -62,4 +62,5 @@ public:
 	afx_msg void OnUpdateDisconall(CCmdUI *pCmdUI);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	afx_msg void OnBnClickedButtonDiscon();
+	void UpdateComboBox(void);
 };

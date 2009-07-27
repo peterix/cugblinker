@@ -5,6 +5,7 @@
 #include "CUGBLinker.h"
 #include "LinkerPage.h"
 #include "AccountInfo.h"
+#include "AccountDlg.h"
 
 
 // CLinkerPage 对话框
@@ -277,7 +278,7 @@ void CLinkerPage::OnMenuDiscon()
 	m_btnDisCon.SetWindowText(L"断开");
 	m_bDisconAll=false;
 
-	OnBnClickedButtonDiscon(); // 选择菜单后自动触发单击事件
+	//OnBnClickedButtonDiscon(); // 选择菜单后自动触发单击事件
 }
 
 void CLinkerPage::OnMenuDisconAll()
@@ -286,7 +287,7 @@ void CLinkerPage::OnMenuDisconAll()
 	m_btnDisCon.SetWindowText(L"断开全部");
 	m_bDisconAll=true;
 
-	OnBnClickedButtonDiscon(); // 选择菜单后自动触发单击事件
+	//OnBnClickedButtonDiscon(); // 选择菜单后自动触发单击事件
 }
 
 void CLinkerPage::OnUpdateDiscon(CCmdUI *pCmdUI)
@@ -311,7 +312,9 @@ void CLinkerPage::OnUpdateDisconall(CCmdUI *pCmdUI)
 void CLinkerPage::OnStnClickedStaticId()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	MessageBox(L"Clicked");
+	CAccountDlg accountDlg;
+	accountDlg.DoModal();
+	UpdateComboBox();
 }
 
 void CLinkerPage::OnBnClickedButtonCon()
@@ -323,7 +326,8 @@ void CLinkerPage::OnBnClickedButtonCon()
 	if (index==CB_ERR)
 	{
 		theApp.accounts.Add(curAccount);
-		m_cboID.AddString(curAccount.m_username);
+		//m_cboID.AddString(curAccount.m_username);
+		UpdateComboBox();
 	}
 	else
 	{
@@ -369,4 +373,24 @@ void CLinkerPage::OnBnClickedButtonDiscon()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	MessageBox(L"Disconnect Success!");
+}
+
+void CLinkerPage::UpdateComboBox(void)
+{
+	int size=m_cboID.GetCount();
+	for (int i=0;i<size;i++)
+	{	
+		m_cboID.DeleteString(0);
+	}
+	for (int i=0;i<theApp.accounts.GetCount();i++)
+	{
+		m_cboID.AddString(theApp.accounts[i].m_username);
+	}
+	CString curStr;
+	m_cboID.GetWindowText(curStr);
+	if (m_cboID.FindStringExact(-1,curStr)==CB_ERR)
+	{
+		m_cboID.SetWindowText(L"");
+		OnCbnEditchangeComboId();
+	}
 }
