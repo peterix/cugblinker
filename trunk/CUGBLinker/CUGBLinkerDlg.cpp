@@ -9,6 +9,12 @@
 #define new DEBUG_NEW
 #endif
 
+#define WM_SHOWTASK WM_USER+55
+#define WM_SHOWME WM_USER+101
+#define WM_KILLME WM_USER+102
+#define WM_CONNECT WM_USER+103
+#define WM_DISCONNECT WM_USER+104
+
 
 // CCUGBLinkerDlg 对话框
 
@@ -30,6 +36,9 @@ BEGIN_MESSAGE_MAP(CCUGBLinkerDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_MESSAGE(WM_SHOWTASK,OnShowTask)
+	ON_WM_SYSCOMMAND()
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -62,6 +71,17 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 	m_sheet.GetClientRect(&m_sheetRect);
 	m_sheet.GetTabControl()->MoveWindow(m_sheetRect);
 	m_sheet.SetActivePage(0);
+
+	// 设置托盘图标
+	nid.cbSize=(DWORD)sizeof(NOTIFYICONDATA); 
+	nid.hWnd=this->m_hWnd; 
+	nid.uID=IDR_MAINFRAME; 
+	nid.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP ; 
+	nid.uCallbackMessage=WM_SHOWTASK;//自定义的消息名称 
+	nid.hIcon=LoadIcon(AfxGetInstanceHandle(),MAKEINTRESOURCE(IDR_MAINFRAME)); 
+	swprintf(nid.szTip,L"CUGBLinker");
+	Shell_NotifyIcon(NIM_ADD,&nid);//在托盘区添加图标 
+
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
@@ -101,3 +121,78 @@ HCURSOR CCUGBLinkerDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CCUGBLinkerDlg::OnSysCommand(UINT nID, LPARAM lParam)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (nID==SC_MINIMIZE /*|| SC_CLOSE*/) 
+	{ 
+		ShowWindow(SW_HIDE);//隐藏主窗口 
+		return;
+	}
+
+	CDialog::OnSysCommand(nID, lParam);
+}
+
+LRESULT CCUGBLinkerDlg::OnShowTask(WPARAM wParam,LPARAM lParam) 
+//wParam接收的是图标的ID，而lParam接收的是鼠标的行为 
+{ 
+	if(wParam!=IDR_MAINFRAME) 
+		return 1; 
+	switch(lParam) 
+	{ 
+	case WM_RBUTTONUP://右键起来时弹出快捷菜单，这里只有一个“关闭” 
+		{
+			LPPOINT lpoint=new tagPOINT; 
+			::GetCursorPos(lpoint);//得到鼠标位置 
+			CMenu menu; 
+			menu.CreatePopupMenu();//声明一个弹出式菜单 
+			menu.AppendMenu(MF_STRING,WM_SHOWME,L"显示(&S)");
+			menu.AppendMenu(MF_SEPARATOR); 
+			menu.AppendMenu(MF_STRING,WM_CONNECT,L"联网(&C)"); 
+			menu.AppendMenu(MF_STRING,WM_DISCONNECT,L"断网(&D)");
+			menu.AppendMenu(MF_SEPARATOR); 
+			menu.AppendMenu(MF_STRING,WM_KILLME,L"退出(&X)"); 
+			//确定弹出式菜单的位置 
+			//menu.TrackPopupMenu(TPM_LEFTALIGN,lpoint->x,lpoint->y,this); 
+			this->SetForegroundWindow();
+			int ret=menu.TrackPopupMenu(TPM_RETURNCMD|TPM_LEFTALIGN|TPM_HORIZONTAL,lpoint->x,lpoint->y,this,NULL);
+			switch(ret)
+			{
+			case WM_SHOWME:
+				ShowWindow(SW_SHOW);//简单的显示主窗口完事儿
+				ShowWindow(SW_SHOWNORMAL); //可以避免原来的最小化
+				break;
+			case WM_KILLME:
+				SendMessage(WM_CLOSE);
+				break;
+			case WM_CONNECT:
+				//AfxBeginThread(Connect,NULL);
+				break;
+			case WM_DISCONNECT:
+				//AfxBeginThread(DisConnect,NULL);
+				break;
+			}
+
+			//资源回收 
+			HMENU hmenu=menu.Detach(); 
+			menu.DestroyMenu(); 
+			delete lpoint; 
+		} 
+		break; 
+	case WM_LBUTTONDBLCLK://双击左键的处理 
+		{
+			ShowWindow(SW_SHOW);//简单的显示主窗口完事儿 
+			ShowWindow(SW_SHOWNORMAL); //可以避免原来的最小化
+		} 
+		break; 
+	} 
+	return 0; 
+}
+
+void CCUGBLinkerDlg::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	Shell_NotifyIcon(NIM_DELETE,&nid);//删除托盘区图标
+	CDialog::OnClose();
+}

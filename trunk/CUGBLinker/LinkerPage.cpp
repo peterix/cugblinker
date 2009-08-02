@@ -41,7 +41,6 @@ void CLinkerPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PWD, curAccount.m_password);
 	DDX_Check(pDX, IDC_CHECK_SAVEPWD, curAccount.m_savePwd);
 	DDX_Radio(pDX, IDC_RADIO_IN, curAccount.m_range);
-	DDX_Check(pDX, IDC_CHECK_AUTOCON, curAccount.m_autoCon);
 }
 
 
@@ -161,23 +160,20 @@ BOOL CLinkerPage::OnInitDialog()
 	CAccountInfo newUser;
 	newUser.m_username=L"080520s";
 	newUser.m_password=L"11111";
-	newUser.m_autoCon=true;
 	newUser.m_autoDis=true;
 	newUser.m_range=0;
 	newUser.m_savePwd=true;
 	newUser.m_showTip=true;
 	theApp.accounts.Add(newUser);
+
 	newUser.m_username=L"080519s";
 	newUser.m_password=L"22222";
-	newUser.m_autoCon=false;
 	newUser.m_autoDis=false;
 	newUser.m_range=1;
 	newUser.m_savePwd=false;
 	newUser.m_showTip=false;
-
 	theApp.accounts.Add(newUser);
-	//m_cboID.AddString(L"080520s");
-	//m_cboID.AddString(L"4104211");
+
 	for(int i=0;i<theApp.accounts.GetCount();i++)
 	{
 		m_cboID.AddString(theApp.accounts[i].m_username);
@@ -243,7 +239,6 @@ void CLinkerPage::SetItemText(void)
 			m_rdoRangeIn.SetCheck(0);
 			m_rdoRangeOut.SetCheck(1);
 		}
-		m_chkAutoCon.SetCheck(curAccount.m_autoCon);
 		m_chkSavePwd.SetCheck(curAccount.m_savePwd);
 	}
 	else
@@ -320,7 +315,7 @@ void CLinkerPage::OnStnClickedStaticId()
 void CLinkerPage::OnBnClickedButtonCon()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	// 添加新用户到用户列表中
+	// 当连接成功时添加新用户到用户列表中
 	UpdateData(TRUE);
 	int index=m_cboID.FindStringExact(-1,curAccount.m_username);
 	if (index==CB_ERR)
