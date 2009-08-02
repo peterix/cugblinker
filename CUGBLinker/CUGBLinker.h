@@ -31,6 +31,7 @@ public:
 	int curAccount;
 
 	DECLARE_MESSAGE_MAP()
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
 
 extern CCUGBLinkerApp theApp;

@@ -34,4 +34,8 @@ public:
 	CPropertySheet m_sheet;
 	CLinkerPage m_linkerPage;//网关连接页面
 	CTrafficPage m_trafficPage;//流量信息页面
+	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
+	afx_msg LRESULT OnShowTask(WPARAM wParam,LPARAM lParam);
+	NOTIFYICONDATA nid;
+	afx_msg void OnClose();
 };

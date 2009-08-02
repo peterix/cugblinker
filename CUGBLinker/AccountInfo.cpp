@@ -6,7 +6,6 @@ CAccountInfo::CAccountInfo(void)
 	, m_password(L"")
 	, m_range(0)
 	, m_savePwd(FALSE)
-	, m_autoCon(FALSE)
 	, m_curTraffic(0)
 	, m_maxTraffic(2048)
 	, m_showTip(FALSE)
@@ -27,7 +26,6 @@ CAccountInfo& CAccountInfo::operator=(const CAccountInfo& rhs)
 	this->m_password=rhs.m_password;
 	this->m_range=rhs.m_range;
 	this->m_savePwd=rhs.m_savePwd;
-	this->m_autoCon=rhs.m_autoCon;
 	this->m_curTraffic=rhs.m_curTraffic;
 	this->m_maxTraffic=rhs.m_maxTraffic;
 	this->m_showTip=rhs.m_showTip;
