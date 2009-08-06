@@ -57,6 +57,7 @@ BEGIN_MESSAGE_MAP(CLinkerPage, CPropertyPage)
 	ON_UPDATE_COMMAND_UI(ID_DISCON, &CLinkerPage::OnUpdateDiscon)
 	ON_UPDATE_COMMAND_UI(ID_DISCONALL, &CLinkerPage::OnUpdateDisconall)
 	ON_WM_INITMENUPOPUP()
+	ON_MESSAGE(WM_UPDATEINFO, &CLinkerPage::OnUpdateInfo)
 END_MESSAGE_MAP()
 
 
@@ -160,7 +161,7 @@ BOOL CLinkerPage::OnInitDialog()
 
 	CAccountInfo newUser;
 	newUser.m_username=L"080520s";
-	newUser.m_password=L"11111";
+	newUser.m_password=L"181305";
 	newUser.m_autoDis=true;
 	newUser.m_range=0;
 	newUser.m_savePwd=true;
@@ -180,24 +181,13 @@ BOOL CLinkerPage::OnInitDialog()
 		m_cboID.AddString(theApp.accounts[i].m_username);
 	}
 	m_txtInfo.SetWindowText(L"网络连接成功\r\n\r\n"
-
-
-
 		L"用 户 名： 丁林枭\r\n" 
-
 		L"访问范围： 国内\r\n" 
-
 		L"欠费断网： 是 \r\n"
-
 		L"超时检查： 8小时 \r\n"
-
 		L"当前连接： 0个 \r\n"
-
 		L"帐户余额： 40.000元 \r\n"
-
-
-		L"如果欠费自动断网，请注意及时加款。\r\n"
-		);
+		L"如果欠费自动断网，请注意及时加款。\r\n");
 
 	// 更新界面，设置按钮的可用状态
 	UpdateData(FALSE);
@@ -392,4 +382,13 @@ void CLinkerPage::UpdateComboBox(void)
 		m_cboID.SetWindowText(L"");
 		OnCbnEditchangeComboId();
 	}
+}
+
+LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
+{
+	CStringA* str=(CStringA*)wParam;
+	int* conSuccess=(int*)lParam;
+
+	m_txtInfo.SetWindowText(CString(str));
+	return 0;
 }

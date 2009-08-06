@@ -9,7 +9,7 @@ UINT Connect(LPVOID pvParam)
 {
 
 	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
-	CLinkerPage* pLinkerPage=(CLinkerPage*&)pMainWnd->m_linkerPage;
+	CLinkerPage* pLinkerPage=(CLinkerPage*)&(pMainWnd->m_linkerPage);
 
 	// 创建socket并连接目标地址
 	CSocket* m_pSocket=new CSocket();
@@ -47,17 +47,44 @@ UINT Connect(LPVOID pvParam)
 	{
 		AfxMessageBox(L"Receive Error!");
 	}
-
 	recStr.ReleaseBuffer();
-	delete m_pSocket;
+
+	//对返回信息处理
 	
+	CStringA ans1="<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
+	CStringA ans2="网络连接成功";
+
+	int conSuccess=0;
+	recStr=recStr.Mid(recStr.Find("<table"));
+	Change(&recStr);
+
+	int pos=0;
+	if((pos=recStr.Find(ans1)) != -1)
+	{
+		recStr=recStr.Mid(pos+66);
+		recStr=recStr.Left(recStr.Find("</table>"));
+	}
+	else if((pos=recStr.Find(ans2)) != -1)
+	{
+		recStr=recStr.Mid(pos);
+		recStr=recStr.Left(recStr.Find("<td  colspan=2>"));
+		conSuccess=1;
+	}
+	else
+	{
+		recStr="连接出错\r\n请登录IP网关连接";
+	}
+
+	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)&recStr,(LPARAM)&conSuccess);
+
+	delete m_pSocket;
 	return 0;
 }
 
 UINT DisConnect(LPVOID pvParam)
 {
 	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
-	CLinkerPage* pLinkerPage=(CLinkerPage*&)pMainWnd->m_linkerPage;
+	CLinkerPage* pLinkerPage=(CLinkerPage*)&(pMainWnd->m_linkerPage);
 
 	int dis=*(int*)pvParam;
 
@@ -99,9 +126,52 @@ UINT DisConnect(LPVOID pvParam)
 	{
 		AfxMessageBox(L"Receive Error!");
 	}
-
 	recStr.ReleaseBuffer();
-	delete m_pSocket;
 
+
+	// 对返回信息处理
+	CStringA ans1="<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
+	CStringA ans2="网络断开成功";
+	CStringA ans3="断开全部连接成功";
+
+	recStr=recStr.Mid(recStr.Find("<table"));
+	Change(&recStr);
+
+	int pos=0;
+	if((pos=recStr.Find(ans1)) != -1)
+	{
+		recStr=recStr.Mid(pos+66);
+		recStr=recStr.Left(recStr.Find("</table>"));
+	}
+	else if((pos=recStr.Find(ans2)) != -1)
+	{
+		recStr=recStr.Mid(pos);
+		recStr=recStr.Left(recStr.Find("</table>"));
+	}
+	else if ((pos=recStr.Find(ans3)) != -1)
+	{
+		recStr=recStr.Mid(pos);
+		recStr=recStr.Left(recStr.Find("</table>"));
+	}
+	else
+	{
+		recStr="断开出错\r\n请请登录IP网关断开。";
+	}
+
+
+	delete m_pSocket;
 	return 0;
+}
+
+void Change(CStringA *str)
+{
+	str->Replace("</td>"," ");
+	str->Replace("<td>","");
+	str->Replace("</tr>","\r\n");
+	str->Replace("<tr>","");
+	str->Replace("<table noborder>","");
+	str->Replace("&nbsp;"," ");
+	str->Replace("<br>","\r\n");
+	str->Replace("<p>","\r\n");
+	str->Replace("<td  colspan=2><font color=\"#cc0000\">","");
 }
