@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "CUGBLinker.h"
 #include "CUGBLinkerDlg.h"
+#include "global.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -14,6 +15,7 @@
 #define WM_KILLME WM_USER+102
 #define WM_CONNECT WM_USER+103
 #define WM_DISCONNECT WM_USER+104
+#define WM_DISCONNECTALL WM_USER+105
 
 
 // CCUGBLinkerDlg 对话框
@@ -147,30 +149,45 @@ LRESULT CCUGBLinkerDlg::OnShowTask(WPARAM wParam,LPARAM lParam)
 			::GetCursorPos(lpoint);//得到鼠标位置 
 			CMenu menu; 
 			menu.CreatePopupMenu();//声明一个弹出式菜单 
-			menu.AppendMenu(MF_STRING,WM_SHOWME,L"显示(&S)");
+			menu.AppendMenu(MF_STRING,WM_SHOWME,L"显示/隐藏(&S)");
 			menu.AppendMenu(MF_SEPARATOR); 
-			menu.AppendMenu(MF_STRING,WM_CONNECT,L"联网(&C)"); 
-			menu.AppendMenu(MF_STRING,WM_DISCONNECT,L"断网(&D)");
+			menu.AppendMenu(MF_STRING,WM_CONNECT,L"连接网络(&C)"); 
+			menu.AppendMenu(MF_STRING,WM_DISCONNECT,L"断开网络(&D)");
+			menu.AppendMenu(MF_STRING,WM_DISCONNECTALL,L"断开全部连接(&A)");
 			menu.AppendMenu(MF_SEPARATOR); 
 			menu.AppendMenu(MF_STRING,WM_KILLME,L"退出(&X)"); 
 			//确定弹出式菜单的位置 
 			//menu.TrackPopupMenu(TPM_LEFTALIGN,lpoint->x,lpoint->y,this); 
 			this->SetForegroundWindow();
 			int ret=menu.TrackPopupMenu(TPM_RETURNCMD|TPM_LEFTALIGN|TPM_HORIZONTAL,lpoint->x,lpoint->y,this,NULL);
+			int dis=0;// 用于标识断开还是断开全部
+
 			switch(ret)
 			{
 			case WM_SHOWME:
-				ShowWindow(SW_SHOW);//简单的显示主窗口完事儿
-				ShowWindow(SW_SHOWNORMAL); //可以避免原来的最小化
+				if (IsWindowVisible())
+				{
+					ShowWindow(SW_HIDE);
+				}
+				else
+				{
+					ShowWindow(SW_SHOW);//简单的显示主窗口完事儿 
+					ShowWindow(SW_SHOWNORMAL); //可以避免原来的最小化
+				}
 				break;
 			case WM_KILLME:
 				SendMessage(WM_CLOSE);
 				break;
 			case WM_CONNECT:
-				//AfxBeginThread(Connect,NULL);
+				AfxBeginThread(Connect, NULL);
 				break;
 			case WM_DISCONNECT:
-				//AfxBeginThread(DisConnect,NULL);
+				dis=0;
+				AfxBeginThread(DisConnect, &dis);
+				break;
+			case WM_DISCONNECTALL:
+				dis=1;
+				AfxBeginThread(DisConnect, &dis);
 				break;
 			}
 
@@ -182,8 +199,15 @@ LRESULT CCUGBLinkerDlg::OnShowTask(WPARAM wParam,LPARAM lParam)
 		break; 
 	case WM_LBUTTONDBLCLK://双击左键的处理 
 		{
+			if (IsWindowVisible())
+			{
+				ShowWindow(SW_HIDE);
+			}
+			else
+			{
 			ShowWindow(SW_SHOW);//简单的显示主窗口完事儿 
 			ShowWindow(SW_SHOWNORMAL); //可以避免原来的最小化
+			}
 		} 
 		break; 
 	} 

@@ -215,6 +215,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\global.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LinkerPage.cpp"
 				>
 			</File>
@@ -286,6 +290,10 @@
 			</File>
 			<File
 				RelativePath=".\CUGBLinkerDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\global.h"
 				>
 			</File>
 			<File
