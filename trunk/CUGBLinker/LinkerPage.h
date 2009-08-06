@@ -47,6 +47,7 @@ private:
 public:
 	void SetBtnStat(void);
 	void SetItemText(void);
+	void UpdateComboBox(void);
 	afx_msg void OnStnClickedStaticId();
 	afx_msg void OnBnClickedButtonCon();
 	afx_msg void OnCbnEditchangeComboId();
@@ -58,5 +59,5 @@ public:
 	afx_msg void OnUpdateDisconall(CCmdUI *pCmdUI);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	afx_msg void OnBnClickedButtonDiscon();
-	void UpdateComboBox(void);
+	afx_msg LRESULT OnUpdateInfo(WPARAM wParam = 0,LPARAM lParam = 0);
 };
