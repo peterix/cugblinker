@@ -179,7 +179,25 @@ BOOL CLinkerPage::OnInitDialog()
 	{
 		m_cboID.AddString(theApp.accounts[i].m_username);
 	}
-	m_txtInfo.SetWindowText(L"aaa\r\nbb\r\nccc\r\nddd\r\neee\r\nfff\r\nggg\r\nhhh\r\niii\r\njjj\r\n");
+	m_txtInfo.SetWindowText(L"网络连接成功\r\n\r\n"
+
+
+
+		L"用 户 名： 丁林枭\r\n" 
+
+		L"访问范围： 国内\r\n" 
+
+		L"欠费断网： 是 \r\n"
+
+		L"超时检查： 8小时 \r\n"
+
+		L"当前连接： 0个 \r\n"
+
+		L"帐户余额： 40.000元 \r\n"
+
+
+		L"如果欠费自动断网，请注意及时加款。\r\n"
+		);
 
 	// 更新界面，设置按钮的可用状态
 	UpdateData(FALSE);

@@ -28,7 +28,8 @@ UINT Connect(LPVOID pvParam)
 		theApp.curAccount.m_username,theApp.curAccount.m_password,range);
 	CStringA sendStr;
 	sendStr.Format( "POST /ipgw/ipgw.ipgw HTTP/1.1\r\n"
-					"Host: 202.204.105.7\r\nContent-Length: %d\r\n"
+					"Host: 202.204.105.7\r\n"
+					"Content-Length: %d\r\n"
 					"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
 					userStr.GetLength());
 	sendStr+=userStr;
@@ -79,9 +80,10 @@ UINT DisConnect(LPVOID pvParam)
 	userStr+=disStr;
 	CStringA sendStr;
 	sendStr.Format( "POST /ipgw/ipgw.ipgw HTTP/1.1\r\n"
-		"Host: 202.204.105.7\r\nContent-Length: %d\r\n"
-		"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
-		userStr.GetLength());
+					"Host: 202.204.105.7\r\n"
+					"Content-Length: %d\r\n"
+					"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
+					userStr.GetLength());
 	sendStr+=userStr;
 
 	if (m_pSocket->Send(sendStr,sendStr.GetLength(),0) == SOCKET_ERROR) 
