@@ -6,6 +6,7 @@
 #include "LinkerPage.h"
 #include "AccountInfo.h"
 #include "AccountDlg.h"
+#include "global.h"
 
 
 // CLinkerPage 对话框
@@ -14,7 +15,7 @@ IMPLEMENT_DYNAMIC(CLinkerPage, CPropertyPage)
 
 CLinkerPage::CLinkerPage()
 : CPropertyPage(CLinkerPage::IDD)
-, m_bDisconAll(false)
+, m_dis(0)
 {
 
 }
@@ -37,10 +38,10 @@ void CLinkerPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_WITHSYS, m_chkAutoStart);
 	DDX_Control(pDX, IDC_BUTTON_CON, m_btnConnect);
 	DDX_Control(pDX, IDC_BUTTON_DISCON, m_btnDisCon);
-	DDX_CBString(pDX, IDC_COMBO_ID, curAccount.m_username);
-	DDX_Text(pDX, IDC_EDIT_PWD, curAccount.m_password);
-	DDX_Check(pDX, IDC_CHECK_SAVEPWD, curAccount.m_savePwd);
-	DDX_Radio(pDX, IDC_RADIO_IN, curAccount.m_range);
+	DDX_CBString(pDX, IDC_COMBO_ID, theApp.curAccount.m_username);
+	DDX_Text(pDX, IDC_EDIT_PWD, theApp.curAccount.m_password);
+	DDX_Check(pDX, IDC_CHECK_SAVEPWD, theApp.curAccount.m_savePwd);
+	DDX_Radio(pDX, IDC_RADIO_IN, theApp.curAccount.m_range);
 }
 
 
@@ -190,7 +191,7 @@ BOOL CLinkerPage::OnInitDialog()
 void CLinkerPage::OnCbnEditchangeComboId()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_cboID.GetWindowText(curAccount.m_username);
+	m_cboID.GetWindowText(theApp.curAccount.m_username);
 	SetItemText();
 	SetBtnStat();
 }
@@ -200,7 +201,7 @@ void CLinkerPage::OnCbnSelchangeComboId()
 	// TODO: 在此添加控件通知处理程序代码
 	int sel=m_cboID.GetCurSel();
 	if (sel>=0)
-		m_cboID.GetLBText(sel,curAccount.m_username);
+		m_cboID.GetLBText(sel,theApp.curAccount.m_username);
 	SetItemText();
 	SetBtnStat();
 }
@@ -213,23 +214,23 @@ void CLinkerPage::OnEnChangeEditPwd()
 	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
 
 	// TODO:  在此添加控件通知处理程序代码
-	m_txtPwd.GetWindowText(curAccount.m_password);
+	m_txtPwd.GetWindowText(theApp.curAccount.m_password);
 	SetBtnStat();
 }
 
 void CLinkerPage::SetItemText(void)
 {
-	TRACE(curAccount.m_username+L"  ");
+	TRACE(theApp.curAccount.m_username+L"  ");
 
 	// 更新界面其他控件状态
-	int index=m_cboID.FindStringExact(-1,curAccount.m_username);
+	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
 	if (index>=0)
 	{
 		TRACE(theApp.accounts[index].m_username+L"\n");
 
-		curAccount=theApp.accounts[index];
-		m_txtPwd.SetWindowText(curAccount.m_password);
-		if (curAccount.m_range==0)
+		theApp.curAccount=theApp.accounts[index];
+		m_txtPwd.SetWindowText(theApp.curAccount.m_password);
+		if (theApp.curAccount.m_range==0)
 		{
 			m_rdoRangeIn.SetCheck(1);
 			m_rdoRangeOut.SetCheck(0);
@@ -239,7 +240,7 @@ void CLinkerPage::SetItemText(void)
 			m_rdoRangeIn.SetCheck(0);
 			m_rdoRangeOut.SetCheck(1);
 		}
-		m_chkSavePwd.SetCheck(curAccount.m_savePwd);
+		m_chkSavePwd.SetCheck(theApp.curAccount.m_savePwd);
 	}
 	else
 	{
@@ -251,7 +252,7 @@ void CLinkerPage::SetItemText(void)
 void CLinkerPage::SetBtnStat(void)
 {
 	// 更新按钮状态
-	if (curAccount.m_username!="" && curAccount.m_password!="")
+	if (theApp.curAccount.m_username!="" && theApp.curAccount.m_password!="")
 	{
 		m_btnConnect.EnableWindow(TRUE);
 		//m_btnDisCon.EnableWindow(TRUE);
@@ -262,7 +263,7 @@ void CLinkerPage::SetBtnStat(void)
 		//m_btnDisCon.EnableWindow(FALSE);
 
 		m_btnDisCon.SetWindowText(L"断开");
-		m_bDisconAll=false;
+		m_dis=0;
 	}
 
 }
@@ -271,7 +272,7 @@ void CLinkerPage::OnMenuDiscon()
 {
 	// TODO: 在此添加命令处理程序代码
 	m_btnDisCon.SetWindowText(L"断开");
-	m_bDisconAll=false;
+	m_dis=0;
 
 	//OnBnClickedButtonDiscon(); // 选择菜单后自动触发单击事件
 }
@@ -280,7 +281,7 @@ void CLinkerPage::OnMenuDisconAll()
 {
 	// TODO: 在此添加命令处理程序代码
 	m_btnDisCon.SetWindowText(L"断开全部");
-	m_bDisconAll=true;
+	m_dis=1;
 
 	//OnBnClickedButtonDiscon(); // 选择菜单后自动触发单击事件
 }
@@ -288,20 +289,20 @@ void CLinkerPage::OnMenuDisconAll()
 void CLinkerPage::OnUpdateDiscon(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
-	pCmdUI->SetCheck(!m_bDisconAll);
+	pCmdUI->SetCheck(!m_dis);
 }
 
 void CLinkerPage::OnUpdateDisconall(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
-	if (curAccount.m_username!="" && curAccount.m_password!="")
+	if (theApp.curAccount.m_username!="" && theApp.curAccount.m_password!="")
 	{
 		pCmdUI->Enable(TRUE);
 	}
 	else
 		pCmdUI->Enable(FALSE);
 
-	pCmdUI->SetCheck(m_bDisconAll);
+	pCmdUI->SetCheck(m_dis);
 }
 
 void CLinkerPage::OnStnClickedStaticId()
@@ -317,57 +318,42 @@ void CLinkerPage::OnBnClickedButtonCon()
 	// TODO: 在此添加控件通知处理程序代码
 	// 当连接成功时添加新用户到用户列表中
 	UpdateData(TRUE);
-	int index=m_cboID.FindStringExact(-1,curAccount.m_username);
+	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
 	if (index==CB_ERR)
 	{
-		theApp.accounts.Add(curAccount);
-		//m_cboID.AddString(curAccount.m_username);
+		theApp.accounts.Add(theApp.curAccount);
+		//m_cboID.AddString(theApp.curAccount.m_username);
 		UpdateComboBox();
 	}
 	else
 	{
-		theApp.accounts[index]=curAccount;
+		theApp.accounts[index]=theApp.curAccount;
 	}
 
-	MessageBox(L"Connect Success!");
-
-	// 连接网络
-	/*
-	m_pSocket=new CSocket();
-	m_pSocket->Create();
-	if(0 == m_pSocket->Connect(L"202.204.105.7",80))
-	{
-	MessageBox(L"Connect Error!");
-	}
-
-	// Step 3: Send message
-	CStringA userStr;
-	userStr.Format("uid=080519s&password=12345&range=0&timeout=1&operation=connect");
-	CStringA sendStr;
-	sendStr.Format("POST /ipgw/ipgw.ipgw HTTP/1.1\r\nHost: 202.204.105.7\r\nContent-Length: %d\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n",userStr.GetLength());
-	sendStr+=userStr;
-
-	if (m_pSocket->Send(sendStr,sendStr.GetLength(),0) == SOCKET_ERROR) 
-	{
-	MessageBox(L"发送失败（Connect）!");
-	}
-
-	// Step 4: Receive message
-
-	CStringA recStr('\0',10000) ;
-	if(m_pSocket->Receive(recStr.GetBuffer(),10000) == SOCKET_ERROR)
-	{
-	MessageBox(L"Receive Error!");
-	}
-	recStr.ReleaseBuffer();
-	delete m_pSocket;
-	*/
+	AfxBeginThread(Connect, NULL);
 }
 
 void CLinkerPage::OnBnClickedButtonDiscon()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	MessageBox(L"Disconnect Success!");
+	UpdateData(TRUE);
+	if (m_dis==1)
+	{
+		// 当断开全部成功时添加新用户到用户列表中
+		int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
+		if (index==CB_ERR)
+		{
+			theApp.accounts.Add(theApp.curAccount);
+			//m_cboID.AddString(theApp.curAccount.m_username);
+			UpdateComboBox();
+		}
+		else
+		{
+			theApp.accounts[index]=theApp.curAccount;
+		}
+	}
+
+	AfxBeginThread(DisConnect, &m_dis);
 }
 
 void CLinkerPage::UpdateComboBox(void)

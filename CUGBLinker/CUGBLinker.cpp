@@ -20,7 +20,7 @@ END_MESSAGE_MAP()
 // CCUGBLinkerApp 构造
 
 CCUGBLinkerApp::CCUGBLinkerApp()
-: curAccount(0)
+: curAccountNum(0)
 {
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中

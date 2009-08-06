@@ -41,13 +41,9 @@ public:
 	CButton m_btnConnect;	// 连接按钮
 	CSplitButton m_btnDisCon; // 断开按钮
 
-	// 当前帐号
-	CAccountInfo curAccount;
 private:
-	// 用于连接的Socket
-	CSocket *m_pSocket;
 	// 全部断开还是只断开当前连接
-	bool m_bDisconAll;
+	int m_dis;
 public:
 	void SetBtnStat(void);
 	void SetItemText(void);

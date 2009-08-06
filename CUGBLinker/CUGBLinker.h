@@ -27,8 +27,10 @@ public:
 
 // 帐号信息
 	CArray<CAccountInfo> accounts;
-	// 当前用户
-	int curAccount;
+	// 当前帐号
+	CAccountInfo curAccount;
+	// 当前帐号序号
+	int curAccountNum;
 
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
