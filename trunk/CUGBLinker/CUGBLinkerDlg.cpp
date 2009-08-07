@@ -17,6 +17,10 @@
 #define WM_DISCONNECT WM_USER+104
 #define WM_DISCONNECTALL WM_USER+105
 
+//声明全局变量
+extern CString g_szPropName;
+extern HANDLE	g_hValue;
+
 
 // CCUGBLinkerDlg 对话框
 
@@ -83,6 +87,9 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 	nid.hIcon=LoadIcon(AfxGetInstanceHandle(),MAKEINTRESOURCE(IDR_MAINFRAME)); 
 	swprintf(nid.szTip,L"CUGBLinker");
 	Shell_NotifyIcon(NIM_ADD,&nid);//在托盘区添加图标 
+
+	//设置窗口属性
+	SetProp(m_hWnd,g_szPropName,g_hValue);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }

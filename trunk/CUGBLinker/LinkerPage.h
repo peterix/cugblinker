@@ -60,4 +60,7 @@ public:
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	afx_msg void OnBnClickedButtonDiscon();
 	afx_msg LRESULT OnUpdateInfo(WPARAM wParam = 0,LPARAM lParam = 0);
+	afx_msg void OnBnClickedCheckWithsys();
+	BOOL m_bAutoStart;
+	void InitStat(void);
 };
