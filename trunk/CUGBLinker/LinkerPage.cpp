@@ -326,17 +326,17 @@ void CLinkerPage::OnBnClickedButtonCon()
 	// TODO: 在此添加控件通知处理程序代码
 	// 当连接成功时添加新用户到用户列表中
 	UpdateData(TRUE);
-	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
-	if (index==CB_ERR)
-	{
-		theApp.accounts.Add(theApp.curAccount);
-		//m_cboID.AddString(theApp.curAccount.m_username);
-		UpdateComboBox();
-	}
-	else
-	{
-		theApp.accounts[index]=theApp.curAccount;
-	}
+	//int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
+	//if (index==CB_ERR)
+	//{
+	//	theApp.accounts.Add(theApp.curAccount);
+	//	//m_cboID.AddString(theApp.curAccount.m_username);
+	//	UpdateComboBox();
+	//}
+	//else
+	//{
+	//	theApp.accounts[index]=theApp.curAccount;
+	//}
 
 	AfxBeginThread(Connect, NULL);
 }
@@ -345,21 +345,21 @@ void CLinkerPage::OnBnClickedButtonDiscon()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	UpdateData(TRUE);
-	if (m_dis==1)
-	{
-		// 当断开全部成功时添加新用户到用户列表中
-		int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
-		if (index==CB_ERR)
-		{
-			theApp.accounts.Add(theApp.curAccount);
-			//m_cboID.AddString(theApp.curAccount.m_username);
-			UpdateComboBox();
-		}
-		else
-		{
-			theApp.accounts[index]=theApp.curAccount;
-		}
-	}
+	//if (m_dis==1)
+	//{
+	//	// 当断开全部成功时添加新用户到用户列表中
+	//	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
+	//	if (index==CB_ERR)
+	//	{
+	//		theApp.accounts.Add(theApp.curAccount);
+	//		//m_cboID.AddString(theApp.curAccount.m_username);
+	//		UpdateComboBox();
+	//	}
+	//	else
+	//	{
+	//		theApp.accounts[index]=theApp.curAccount;
+	//	}
+	//}
 
 	AfxBeginThread(DisConnect, &m_dis);
 }
@@ -386,9 +386,26 @@ void CLinkerPage::UpdateComboBox(void)
 
 LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 {
-	CStringA* str=(CStringA*)wParam;
-	int* conSuccess=(int*)lParam;
+	CString* strInfo=(CString*)wParam;
+	int* success=(int*)lParam;//0不成功，1连接成功，2断开成功
 
-	m_txtInfo.SetWindowText(CString(str));
+	m_txtInfo.SetWindowText(*strInfo);
+	if (*success==1 || (m_dis==1 && *success==2))
+	{// 连接或断开成功
+		// 连接或断开全部成功时添加新用户到用户列表中
+		int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
+		if (index==CB_ERR)
+		{
+			theApp.accounts.Add(theApp.curAccount);
+			//m_cboID.AddString(theApp.curAccount.m_username);
+			UpdateComboBox();
+		}
+		else
+		{
+			theApp.accounts[index]=theApp.curAccount;
+		}
+	}
+	delete strInfo;
+	delete success;
 	return 0;
 }
