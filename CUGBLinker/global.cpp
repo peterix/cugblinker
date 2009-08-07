@@ -54,7 +54,7 @@ UINT Connect(LPVOID pvParam)
 	CStringA ans1="<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
 	CStringA ans2="网络连接成功";
 
-	int conSuccess=0;
+	int* conSuccess=new int(0);
 	recStr=recStr.Mid(recStr.Find("<table"));
 	Change(&recStr);
 
@@ -67,15 +67,17 @@ UINT Connect(LPVOID pvParam)
 	else if((pos=recStr.Find(ans2)) != -1)
 	{
 		recStr=recStr.Mid(pos);
-		recStr=recStr.Left(recStr.Find("<td  colspan=2>"));
-		conSuccess=1;
+		recStr=recStr.Left(recStr.Find("</font>"));
+		*conSuccess=1;
 	}
 	else
 	{
 		recStr="连接出错\r\n请登录IP网关连接";
 	}
 
-	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)&recStr,(LPARAM)&conSuccess);
+	CString* str=new CString('\0',recStr.GetLength());
+	MultiByteToWideChar( CP_ACP, 0, recStr, recStr.GetLength(), str->GetBuffer(), str->GetLength() );
+	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)str,(LPARAM)conSuccess);
 
 	delete m_pSocket;
 	return 0;
@@ -137,6 +139,7 @@ UINT DisConnect(LPVOID pvParam)
 	recStr=recStr.Mid(recStr.Find("<table"));
 	Change(&recStr);
 
+	int* disSuccess=new int(0);
 	int pos=0;
 	if((pos=recStr.Find(ans1)) != -1)
 	{
@@ -147,16 +150,23 @@ UINT DisConnect(LPVOID pvParam)
 	{
 		recStr=recStr.Mid(pos);
 		recStr=recStr.Left(recStr.Find("</table>"));
+		*disSuccess=2;
 	}
 	else if ((pos=recStr.Find(ans3)) != -1)
 	{
 		recStr=recStr.Mid(pos);
 		recStr=recStr.Left(recStr.Find("</table>"));
+		*disSuccess=2;
 	}
 	else
 	{
 		recStr="断开出错\r\n请请登录IP网关断开。";
 	}
+
+	// 像界面发送消息，更新显示
+	CString* str=new CString('\0',recStr.GetLength());
+	MultiByteToWideChar( CP_ACP, 0, recStr, recStr.GetLength(), str->GetBuffer(), str->GetLength() );
+	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)str,(LPARAM)disSuccess);
 
 
 	delete m_pSocket;
@@ -175,3 +185,4 @@ void Change(CStringA *str)
 	str->Replace("<p>","\r\n");
 	str->Replace("<td  colspan=2><font color=\"#cc0000\">","");
 }
+
