@@ -32,10 +32,42 @@ CCUGBLinkerApp::CCUGBLinkerApp()
 CCUGBLinkerApp theApp;
 
 
+//添加的标识只运行一次的属性名
+CString g_szPropName = L"CUGBLinker";
+HANDLE	g_hValue = (HANDLE)520;
+
+//添加一个枚举窗口的函数
+BOOL CALLBACK EnumWndProc(HWND hwnd,LPARAM lParam)
+{
+	HANDLE h = GetProp(hwnd,g_szPropName);
+	if( h == g_hValue)
+	{
+		*(HWND*)lParam = hwnd;
+		return false;
+	}
+
+	return true;
+}
+
+
 // CCUGBLinkerApp 初始化
 
 BOOL CCUGBLinkerApp::InitInstance()
 {
+	// 只能同时运行一个实例
+
+	//查找是否有本程序的前一个实例运行
+	HWND oldHWnd = NULL;
+	EnumWindows(EnumWndProc,(LPARAM)&oldHWnd);	//枚举所有运行的窗口
+	if(oldHWnd != NULL)
+	{
+		::ShowWindow(oldHWnd,SW_SHOWNORMAL);	//激活找到的前一个程序
+		::SetForegroundWindow(oldHWnd);			//把它设为前景窗口
+		return false;							//退出本次运行
+	}
+
+
+
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
 	// 使用 ComCtl32.dll 版本 6 或更高版本来启用可视化方式，
 	//则需要 InitCommonControlsEx()。否则，将无法创建窗口。
@@ -63,7 +95,7 @@ BOOL CCUGBLinkerApp::InitInstance()
 	// 更改用于存储设置的注册表项
 	// TODO: 应适当修改该字符串，
 	// 例如修改为公司或组织名
-	SetRegistryKey(_T("CUGBLiner"));
+	SetRegistryKey(_T("CUGBLinker"));
 
 	CCUGBLinkerDlg dlg;
 	m_pMainWnd = &dlg;
@@ -98,3 +130,4 @@ BOOL CCUGBLinkerApp::PreTranslateMessage(MSG* pMsg)
 
 	return CWinApp::PreTranslateMessage(pMsg);
 }
+

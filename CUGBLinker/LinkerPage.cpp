@@ -16,6 +16,7 @@ IMPLEMENT_DYNAMIC(CLinkerPage, CPropertyPage)
 CLinkerPage::CLinkerPage()
 : CPropertyPage(CLinkerPage::IDD)
 , m_dis(0)
+, m_bAutoStart(FALSE)
 {
 
 }
@@ -42,6 +43,7 @@ void CLinkerPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_PWD, theApp.curAccount.m_password);
 	DDX_Check(pDX, IDC_CHECK_SAVEPWD, theApp.curAccount.m_savePwd);
 	DDX_Radio(pDX, IDC_RADIO_IN, theApp.curAccount.m_range);
+	DDX_Check(pDX, IDC_CHECK_WITHSYS, m_bAutoStart);
 }
 
 
@@ -58,6 +60,7 @@ BEGIN_MESSAGE_MAP(CLinkerPage, CPropertyPage)
 	ON_UPDATE_COMMAND_UI(ID_DISCONALL, &CLinkerPage::OnUpdateDisconall)
 	ON_WM_INITMENUPOPUP()
 	ON_MESSAGE(WM_UPDATEINFO, &CLinkerPage::OnUpdateInfo)
+	ON_BN_CLICKED(IDC_CHECK_WITHSYS, &CLinkerPage::OnBnClickedCheckWithsys)
 END_MESSAGE_MAP()
 
 
@@ -190,8 +193,9 @@ BOOL CLinkerPage::OnInitDialog()
 		L"如果欠费自动断网，请注意及时加款。\r\n");
 
 	// 更新界面，设置按钮的可用状态
-	UpdateData(FALSE);
+	//UpdateData(FALSE);
 	SetBtnStat();
+	InitStat();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
 }
@@ -408,4 +412,53 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 	delete strInfo;
 	delete success;
 	return 0;
+}
+
+void CLinkerPage::OnBnClickedCheckWithsys()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData();
+
+	CString fileName('\0',200);
+	GetModuleFileName(NULL,fileName.GetBuffer(),200);
+	fileName.ReleaseBuffer();
+	HKEY hRegKey=NULL;
+	CString str=_T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+
+	if(RegOpenKey(HKEY_CURRENT_USER,str,&hRegKey) != ERROR_SUCCESS)
+		return;
+
+	if(m_bAutoStart)
+	{
+		RegSetValueEx(hRegKey,_T("CUGBLinker"),0,REG_SZ,
+			(CONST BYTE *)fileName.GetBuffer(),fileName.GetLength()*2);
+		fileName.ReleaseBuffer();	
+	}
+	else
+	{
+		RegDeleteValue(hRegKey,_T("CUGBLinker"));
+	}
+	RegCloseKey(hRegKey);
+}
+
+void CLinkerPage::InitStat(void)
+{
+	// 随机启动复选框状态
+	HKEY hRegKey=NULL;
+	CString str=_T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
+	if(RegOpenKey(HKEY_CURRENT_USER,str,&hRegKey) == ERROR_SUCCESS)
+	{
+		LONG a;
+		if(RegQueryValueEx(hRegKey,_T("CUGBLinker"),NULL,NULL,NULL,NULL)==ERROR_SUCCESS)
+			m_chkAutoStart.SetCheck(1);
+		else
+			m_chkAutoStart.SetCheck(0);
+	}
+	RegCloseKey(hRegKey);
+	
+	// 用户名列表状态
+
+	// 自动连接状态
+
+	// 断开按钮状态
 }
