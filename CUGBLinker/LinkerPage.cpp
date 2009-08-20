@@ -179,6 +179,7 @@ BOOL CLinkerPage::OnInitDialog()
 	newUser.m_showTip=false;
 	theApp.accounts.Add(newUser);
 
+
 	for(int i=0;i<theApp.accounts.GetCount();i++)
 	{
 		m_cboID.AddString(theApp.accounts[i].m_username);
