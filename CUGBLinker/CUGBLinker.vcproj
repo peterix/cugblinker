@@ -207,6 +207,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConfigXml.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CUGBLinker.cpp"
 				>
 			</File>
@@ -282,6 +286,10 @@
 			</File>
 			<File
 				RelativePath=".\AdvComboBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ConfigXml.h"
 				>
 			</File>
 			<File
