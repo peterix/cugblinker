@@ -16,7 +16,8 @@ UINT Connect(LPVOID pvParam)
 	m_pSocket->Create();
 	if(0 == m_pSocket->Connect(L"202.204.105.7",80))
 	{
-		AfxMessageBox(L"Connect Error!");
+		AfxMessageBox(L"网关连接失败！");
+		return -1;
 	}
 
 	// 发送消息
@@ -36,7 +37,8 @@ UINT Connect(LPVOID pvParam)
 
 	if (m_pSocket->Send(sendStr,sendStr.GetLength(),0) == SOCKET_ERROR) 
 	{
-		AfxMessageBox(L"发送失败（Connect）!");
+		AfxMessageBox(L"发送帐号信息失败！");
+		return -2;
 	}
 
 	// 接收消息
@@ -45,7 +47,8 @@ UINT Connect(LPVOID pvParam)
 	int recLen;
 	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),2000)) == SOCKET_ERROR)
 	{
-		AfxMessageBox(L"Receive Error!");
+		AfxMessageBox(L"接收网关反馈失败！");
+		return -3;
 	}
 	recStr.ReleaseBuffer();
 
@@ -54,7 +57,7 @@ UINT Connect(LPVOID pvParam)
 	CStringA ans1="<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
 	CStringA ans2="网络连接成功";
 
-	int* conSuccess=new int(0);
+	int* conSuccess=new int(-1);
 	recStr=recStr.Mid(recStr.Find("<table"));
 	Change(&recStr);
 
@@ -95,7 +98,8 @@ UINT DisConnect(LPVOID pvParam)
 	m_pSocket->Create();
 	if(0 == m_pSocket->Connect(L"202.204.105.7",80))
 	{
-		AfxMessageBox(L"Connect Error!");
+		AfxMessageBox(L"网关连接失败！");
+		return -1;
 	}
 
 	// 发送消息
@@ -117,7 +121,8 @@ UINT DisConnect(LPVOID pvParam)
 
 	if (m_pSocket->Send(sendStr,sendStr.GetLength(),0) == SOCKET_ERROR) 
 	{
-		AfxMessageBox(L"发送失败（Connect）!");
+		AfxMessageBox(L"发送帐号信息失败！");
+		return -2;
 	}
 
 	// 接收消息
@@ -126,7 +131,8 @@ UINT DisConnect(LPVOID pvParam)
 	int recLen;
 	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),2000)) == SOCKET_ERROR)
 	{
-		AfxMessageBox(L"Receive Error!");
+		AfxMessageBox(L"接收网关反馈失败！");
+		return -3;
 	}
 	recStr.ReleaseBuffer();
 
@@ -139,7 +145,7 @@ UINT DisConnect(LPVOID pvParam)
 	recStr=recStr.Mid(recStr.Find("<table"));
 	Change(&recStr);
 
-	int* disSuccess=new int(0);
+	int* disSuccess=new int(-2);
 	int pos=0;
 	if((pos=recStr.Find(ans1)) != -1)
 	{
@@ -185,4 +191,3 @@ void Change(CStringA *str)
 	str->Replace("<p>","\r\n");
 	str->Replace("<td  colspan=2><font color=\"#cc0000\">","");
 }
-

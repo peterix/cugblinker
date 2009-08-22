@@ -46,6 +46,7 @@ private:
 	int m_dis;
 public:
 	void SetBtnStat(void);
+	void InitStat(void);
 	void SetItemText(void);
 	void UpdateComboBox(void);
 	afx_msg void OnStnClickedStaticId();
@@ -62,5 +63,4 @@ public:
 	afx_msg LRESULT OnUpdateInfo(WPARAM wParam = 0,LPARAM lParam = 0);
 	afx_msg void OnBnClickedCheckWithsys();
 	BOOL m_bAutoStart;
-	void InitStat(void);
 };

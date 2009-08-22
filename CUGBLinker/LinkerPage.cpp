@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "CUGBLinker.h"
+#include "CUGBLinkerDlg.h"
 #include "LinkerPage.h"
 #include "AccountInfo.h"
 #include "AccountDlg.h"
@@ -184,14 +185,14 @@ BOOL CLinkerPage::OnInitDialog()
 	{
 		m_cboID.AddString(theApp.accounts[i].m_username);
 	}
-	m_txtInfo.SetWindowText(L"网络连接成功\r\n\r\n"
-		L"用 户 名： 丁林枭\r\n" 
-		L"访问范围： 国内\r\n" 
-		L"欠费断网： 是 \r\n"
-		L"超时检查： 8小时 \r\n"
-		L"当前连接： 0个 \r\n"
-		L"帐户余额： 40.000元 \r\n"
-		L"如果欠费自动断网，请注意及时加款。\r\n");
+	//m_txtInfo.SetWindowText(L"网络连接成功\r\n\r\n"
+	//	L"用 户 名： 丁林枭\r\n" 
+	//	L"访问范围： 国内\r\n" 
+	//	L"欠费断网： 是 \r\n"
+	//	L"超时检查： 8小时 \r\n"
+	//	L"当前连接： 0个 \r\n"
+	//	L"帐户余额： 40.000元 \r\n"
+	//	L"如果欠费自动断网，请注意及时加款。\r\n");
 
 	// 更新界面，设置按钮的可用状态
 	//UpdateData(FALSE);
@@ -331,18 +332,6 @@ void CLinkerPage::OnBnClickedButtonCon()
 	// TODO: 在此添加控件通知处理程序代码
 	// 当连接成功时添加新用户到用户列表中
 	UpdateData(TRUE);
-	//int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
-	//if (index==CB_ERR)
-	//{
-	//	theApp.accounts.Add(theApp.curAccount);
-	//	//m_cboID.AddString(theApp.curAccount.m_username);
-	//	UpdateComboBox();
-	//}
-	//else
-	//{
-	//	theApp.accounts[index]=theApp.curAccount;
-	//}
-
 	AfxBeginThread(Connect, NULL);
 }
 
@@ -350,22 +339,6 @@ void CLinkerPage::OnBnClickedButtonDiscon()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	UpdateData(TRUE);
-	//if (m_dis==1)
-	//{
-	//	// 当断开全部成功时添加新用户到用户列表中
-	//	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
-	//	if (index==CB_ERR)
-	//	{
-	//		theApp.accounts.Add(theApp.curAccount);
-	//		//m_cboID.AddString(theApp.curAccount.m_username);
-	//		UpdateComboBox();
-	//	}
-	//	else
-	//	{
-	//		theApp.accounts[index]=theApp.curAccount;
-	//	}
-	//}
-
 	AfxBeginThread(DisConnect, &m_dis);
 }
 
@@ -391,10 +364,42 @@ void CLinkerPage::UpdateComboBox(void)
 
 LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 {
+	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
+
 	CString* strInfo=(CString*)wParam;
 	int* success=(int*)lParam;//0不成功，1连接成功，2断开成功
 
+	// 设置中间提示窗口内容
 	m_txtInfo.SetWindowText(*strInfo);
+
+	// 弹出托盘提示气球
+	strInfo->Replace(L"\n",L"");
+	pMainWnd->nid.cbSize=sizeof(NOTIFYICONDATA);
+	pMainWnd->nid.uFlags = NIF_INFO;
+	swprintf(pMainWnd->nid.szInfo,*strInfo);
+	if (*success==1)//连接成功
+	{
+		pMainWnd->nid.dwInfoFlags = NIIF_INFO;
+		swprintf(pMainWnd->nid.szInfoTitle,L"连接成功");
+	}
+	else if (*success==2)//断开成功
+	{
+		pMainWnd->nid.dwInfoFlags = NIIF_INFO;
+		swprintf(pMainWnd->nid.szInfoTitle,L"断开成功");
+	}
+	else if (*success==-1)//连接失败
+	{
+		pMainWnd->nid.dwInfoFlags = NIIF_ERROR;
+		swprintf(pMainWnd->nid.szInfoTitle,L"连接失败");
+	}
+	else if (*success==-2)//断开失败
+	{
+		pMainWnd->nid.dwInfoFlags = NIIF_ERROR;
+		swprintf(pMainWnd->nid.szInfoTitle,L"断开失败");
+	}
+	return Shell_NotifyIcon(NIM_MODIFY, &pMainWnd->nid);
+
+	// 添加新用户到用户列表
 	if (*success==1 || (m_dis==1 && *success==2))
 	{// 连接或断开成功
 		// 连接或断开全部成功时添加新用户到用户列表中
@@ -458,6 +463,8 @@ void CLinkerPage::InitStat(void)
 	RegCloseKey(hRegKey);
 	
 	// 用户名列表状态
+	m_cboID.SetCurSel(0);
+	OnCbnSelchangeComboId();
 
 	// 自动连接状态
 
