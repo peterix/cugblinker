@@ -84,6 +84,16 @@ CAccountInfo CConfigXml::GetAccount(int i)
 	return accountInfo;
 }
 
+void CConfigXml::DelAccount(int i)
+{
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+	if (account)
+	{
+		account->Parent()->RemoveChild(account);
+	}
+}
+
 void CConfigXml::SetActiveAccount(int val)
 {
 	TiXmlHandle hDoc(&doc);

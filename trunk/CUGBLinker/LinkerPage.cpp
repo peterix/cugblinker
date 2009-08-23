@@ -525,7 +525,12 @@ void CLinkerPage::OnDestroy()
 	// 保存各项设置到xml文件
 	UpdateData(TRUE);
 	// 用户名列表状态
-	int accountLen=theApp.accounts.GetCount();
+	int accountLen=theApp.configXml.GetAccountCount();
+	for (int i=0;i<accountLen;i++)
+	{
+		theApp.configXml.DelAccount(i);
+	}
+	accountLen=theApp.accounts.GetCount();
 	for (int i=0;i<accountLen;i++)
 	{
 		theApp.configXml.SetAccount(theApp.accounts[i]);
@@ -537,5 +542,6 @@ void CLinkerPage::OnDestroy()
 
 	// 断开按钮状态
 	theApp.configXml.SetDisBtnStatus(m_dis);
+
 	theApp.configXml.SaveFile();
 }
