@@ -85,7 +85,7 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 	nid.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP ; 
 	nid.uCallbackMessage=WM_SHOWTASK;//自定义的消息名称 
 	nid.hIcon=LoadIcon(AfxGetInstanceHandle(),MAKEINTRESOURCE(IDR_MAINFRAME)); 
-	swprintf(nid.szTip,L"CUGBLinker");
+	_tcscpy_s(nid.szTip,L"CUGBLinker");
 	Shell_NotifyIcon(NIM_ADD,&nid);//在托盘区添加图标 
 
 	//设置窗口属性

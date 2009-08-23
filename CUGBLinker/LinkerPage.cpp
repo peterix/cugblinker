@@ -402,26 +402,26 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 	strInfo->Replace(L"\n",L"");
 	pMainWnd->nid.cbSize=sizeof(NOTIFYICONDATA);
 	pMainWnd->nid.uFlags = NIF_INFO;
-	swprintf(pMainWnd->nid.szInfo,*strInfo);
+	_tcscpy_s(pMainWnd->nid.szInfo,*strInfo);
 	if (*success==1)//连接成功
 	{
 		pMainWnd->nid.dwInfoFlags = NIIF_INFO;
-		swprintf(pMainWnd->nid.szInfoTitle,L"连接成功");
+		_tcscpy_s(pMainWnd->nid.szInfoTitle,L"连接成功");
 	}
 	else if (*success==2)//断开成功
 	{
 		pMainWnd->nid.dwInfoFlags = NIIF_INFO;
-		swprintf(pMainWnd->nid.szInfoTitle,L"断开成功");
+		_tcscpy_s(pMainWnd->nid.szInfoTitle,L"断开成功");
 	}
 	else if (*success==-1)//连接失败
 	{
 		pMainWnd->nid.dwInfoFlags = NIIF_ERROR;
-		swprintf(pMainWnd->nid.szInfoTitle,L"连接失败");
+		_tcscpy_s(pMainWnd->nid.szInfoTitle,L"连接失败");
 	}
 	else if (*success==-2)//断开失败
 	{
 		pMainWnd->nid.dwInfoFlags = NIIF_ERROR;
-		swprintf(pMainWnd->nid.szInfoTitle,L"断开失败");
+		_tcscpy_s(pMainWnd->nid.szInfoTitle,L"断开失败");
 	}
 	return Shell_NotifyIcon(NIM_MODIFY, &pMainWnd->nid);
 
@@ -480,7 +480,6 @@ void CLinkerPage::InitStat(void)
 	CString str=_T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
 	if(RegOpenKey(HKEY_CURRENT_USER,str,&hRegKey) == ERROR_SUCCESS)
 	{
-		LONG a;
 		if(RegQueryValueEx(hRegKey,_T("CUGBLinker"),NULL,NULL,NULL,NULL)==ERROR_SUCCESS)
 			m_chkAutoStart.SetCheck(1);
 		else

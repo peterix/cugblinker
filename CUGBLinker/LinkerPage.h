@@ -44,6 +44,10 @@ public:
 private:
 	// 全部断开还是只断开当前连接，0表示断开当前，1表示断开全部
 	int m_dis;
+	// 是否随系统启动
+	BOOL m_bAutoStart;
+	// 当前所使用系统的版本
+	int m_osVersion;
 public:
 	void SetBtnStat(void);
 	void InitStat(void);
@@ -62,7 +66,4 @@ public:
 	afx_msg void OnBnClickedButtonDiscon();
 	afx_msg LRESULT OnUpdateInfo(WPARAM wParam = 0,LPARAM lParam = 0);
 	afx_msg void OnBnClickedCheckWithsys();
-	BOOL m_bAutoStart;
-	// 当前所使用系统的版本
-	int m_osVersion;
 };
