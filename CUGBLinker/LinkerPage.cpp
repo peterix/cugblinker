@@ -188,14 +188,14 @@ BOOL CLinkerPage::OnInitDialog()
 
 	m_btnDisCon.SetDropDownMenu(IDR_DISMENU,0);
 
-	CAccountInfo newUser;
-	newUser.m_username=L"1111111";
-	newUser.m_password=L"2222222";
-	newUser.m_autoDis=true;
-	newUser.m_range=0;
-	newUser.m_savePwd=true;
-	newUser.m_showTip=true;
-	theApp.configXml.SetAccount(newUser);
+	//CAccountInfo newUser;
+	//newUser.m_username=L"1111111";
+	//newUser.m_password=L"2222222";
+	//newUser.m_autoDis=true;
+	//newUser.m_range=0;
+	//newUser.m_savePwd=true;
+	//newUser.m_showTip=true;
+	//theApp.configXml.SetAccount(newUser);
 	//theApp.accounts.Add(newUser);
 
 	//newUser.m_username=L"080519s";
@@ -349,8 +349,8 @@ void CLinkerPage::OnUpdateDisconall(CCmdUI *pCmdUI)
 void CLinkerPage::OnStnClickedStaticId()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	//CAccountDlg accountDlg;
-	//accountDlg.DoModal();
+	CAccountDlg accountDlg;
+	accountDlg.DoModal();
 	UpdateComboBox();
 }
 
@@ -391,8 +391,14 @@ void CLinkerPage::UpdateComboBox(void)
 	if (m_cboID.FindStringExact(-1,curStr)==CB_ERR)
 	{
 		m_cboID.SetWindowText(L"");
-		OnCbnEditchangeComboId();
 	}
+	else
+	{
+		m_cboID.SetWindowText(curStr);
+		m_cboID.SelectString(-1,curStr);
+	}
+	OnCbnEditchangeComboId();
+
 }
 
 LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
@@ -430,7 +436,7 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 		pMainWnd->nid.dwInfoFlags = NIIF_ERROR;
 		_tcscpy_s(pMainWnd->nid.szInfoTitle,L"断开失败");
 	}
-	return Shell_NotifyIcon(NIM_MODIFY, &pMainWnd->nid);
+	Shell_NotifyIcon(NIM_MODIFY, &pMainWnd->nid);
 
 	// 添加新用户到用户列表
 	if (*success==1 || (m_dis==1 && *success==2))
