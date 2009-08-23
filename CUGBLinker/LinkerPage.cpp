@@ -18,6 +18,7 @@ CLinkerPage::CLinkerPage()
 : CPropertyPage(CLinkerPage::IDD)
 , m_dis(0)
 , m_bAutoStart(FALSE)
+, m_osVersion(0)
 {
 
 }
@@ -52,6 +53,7 @@ BEGIN_MESSAGE_MAP(CLinkerPage, CPropertyPage)
 	ON_STN_CLICKED(IDC_STATIC_ID, &CLinkerPage::OnStnClickedStaticId)
 	ON_BN_CLICKED(IDC_BUTTON_CON, &CLinkerPage::OnBnClickedButtonCon)
 	ON_BN_CLICKED(IDC_BUTTON_DISCON, &CLinkerPage::OnBnClickedButtonDiscon)
+	ON_BN_CLICKED(IDC_BUTTONXP_DISCON, &CLinkerPage::OnBnClickedButtonDiscon)
 	ON_CBN_EDITCHANGE(IDC_COMBO_ID, &CLinkerPage::OnCbnEditchangeComboId)
 	ON_CBN_SELCHANGE(IDC_COMBO_ID, &CLinkerPage::OnCbnSelchangeComboId)
 	ON_EN_CHANGE(IDC_EDIT_PWD, &CLinkerPage::OnEnChangeEditPwd)
@@ -157,6 +159,24 @@ BOOL CLinkerPage::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 
 	// TODO:  在此添加额外的初始化
+	// 判断当前使用的系统，来决定显示什么样式的断开按钮
+	OSVERSIONINFO osvi;
+	ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&osvi);
+	m_osVersion=osvi.dwMajorVersion;
+
+	if (m_osVersion>=6) // VISTA以上版本
+	{
+		GetDlgItem(IDC_BUTTONXP_DISCON)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_BUTTON_DISCON)->ShowWindow(SW_SHOW);
+	}
+	else // VISTA以下版本，XP等 
+	{
+		GetDlgItem(IDC_BUTTONXP_DISCON)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_BUTTON_DISCON)->ShowWindow(SW_HIDE);
+	}
+
 
 	// 设置提示信息
 	m_lblID.SetText(L"单机此处管理帐号");
@@ -339,7 +359,13 @@ void CLinkerPage::OnBnClickedButtonDiscon()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	UpdateData(TRUE);
-	AfxBeginThread(DisConnect, &m_dis);
+	if (m_osVersion>=6) // VISTA以上版本
+		AfxBeginThread(DisConnect, &m_dis);
+	else // VISTA以下版本，XP等
+	{
+		m_dis=1;
+		AfxBeginThread(DisConnect, &m_dis);
+	}
 }
 
 void CLinkerPage::UpdateComboBox(void)

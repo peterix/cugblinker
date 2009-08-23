@@ -9,6 +9,7 @@
 
 #include "resource.h"		// 主符号
 #include "AccountInfo.h"
+#include "configxml.h"
 
 // CCUGBLinkerApp:
 // 有关此类的实现，请参阅 CUGBLinker.cpp
@@ -31,6 +32,8 @@ public:
 	CAccountInfo curAccount;
 	// 当前帐号序号
 	int curAccountNum;
+	// 记录配置到xml文件
+	CConfigXml configXml;
 
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
