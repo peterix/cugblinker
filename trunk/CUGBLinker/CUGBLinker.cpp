@@ -97,6 +97,9 @@ BOOL CCUGBLinkerApp::InitInstance()
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("CUGBLinker"));
 
+	// 初始化配置文件
+	configXml.Init();
+
 	CCUGBLinkerDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();

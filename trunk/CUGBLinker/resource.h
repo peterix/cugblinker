@@ -24,6 +24,7 @@
 #define IDC_EDIT2                       1015
 #define IDC_BUTTON1                     1020
 #define IDC_DEL_BUTTON                  1020
+#define IDC_BUTTONXP_DISCON             1020
 #define IDC_SPLIT1                      1021
 #define IDC_SPLIT2                      1022
 #define IDC_EDIT1                       1023
