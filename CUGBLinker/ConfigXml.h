@@ -18,6 +18,7 @@ public:
 	void SaveFile(void);
 	void SetAccount(CAccountInfo& accountInfo);
 	CAccountInfo GetAccount(int i=0);
+	void DelAccount(int i);
 	void SetActiveAccount(int val);
 	int GetActiveAccount(void);
 	void SetAutoConnect(int val);
