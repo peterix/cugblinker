@@ -30,8 +30,6 @@ public:
 	CArray<CAccountInfo> accounts;
 	// 当前帐号
 	CAccountInfo curAccount;
-	// 当前帐号序号
-	int curAccountNum;
 	// 记录配置到xml文件
 	CConfigXml configXml;
 

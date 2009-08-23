@@ -40,10 +40,13 @@ public:
 	CEdit m_txtInfo;		// 连接信息
 	CButton m_btnConnect;	// 连接按钮
 	CSplitButton m_btnDisCon; // 断开按钮
+	CButton m_btnDisConXP;	//XP下的断开按钮
 
 private:
 	// 全部断开还是只断开当前连接，0表示断开当前，1表示断开全部
 	int m_dis;
+	// 是否自动连接
+	BOOL m_bAutoCon;
 	// 是否随系统启动
 	BOOL m_bAutoStart;
 	// 当前所使用系统的版本
@@ -66,4 +69,6 @@ public:
 	afx_msg void OnBnClickedButtonDiscon();
 	afx_msg LRESULT OnUpdateInfo(WPARAM wParam = 0,LPARAM lParam = 0);
 	afx_msg void OnBnClickedCheckWithsys();
+	afx_msg void OnDestroy();
+	int m_curAccountNum;
 };
