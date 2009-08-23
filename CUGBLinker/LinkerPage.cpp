@@ -19,6 +19,8 @@ CLinkerPage::CLinkerPage()
 , m_dis(0)
 , m_bAutoStart(FALSE)
 , m_osVersion(0)
+, m_bAutoCon(FALSE)
+, m_curAccountNum(0)
 {
 
 }
@@ -41,11 +43,13 @@ void CLinkerPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK_WITHSYS, m_chkAutoStart);
 	DDX_Control(pDX, IDC_BUTTON_CON, m_btnConnect);
 	DDX_Control(pDX, IDC_BUTTON_DISCON, m_btnDisCon);
+	DDX_Control(pDX, IDC_BUTTONXP_DISCON, m_btnDisConXP);
 	DDX_CBString(pDX, IDC_COMBO_ID, theApp.curAccount.m_username);
 	DDX_Text(pDX, IDC_EDIT_PWD, theApp.curAccount.m_password);
 	DDX_Check(pDX, IDC_CHECK_SAVEPWD, theApp.curAccount.m_savePwd);
 	DDX_Radio(pDX, IDC_RADIO_IN, theApp.curAccount.m_range);
 	DDX_Check(pDX, IDC_CHECK_WITHSYS, m_bAutoStart);
+	DDX_Check(pDX, IDC_CHECK_AUTOCON, m_bAutoCon);
 }
 
 
@@ -64,6 +68,7 @@ BEGIN_MESSAGE_MAP(CLinkerPage, CPropertyPage)
 	ON_WM_INITMENUPOPUP()
 	ON_MESSAGE(WM_UPDATEINFO, &CLinkerPage::OnUpdateInfo)
 	ON_BN_CLICKED(IDC_CHECK_WITHSYS, &CLinkerPage::OnBnClickedCheckWithsys)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -168,13 +173,13 @@ BOOL CLinkerPage::OnInitDialog()
 
 	if (m_osVersion>=6) // VISTA以上版本
 	{
-		GetDlgItem(IDC_BUTTONXP_DISCON)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_BUTTON_DISCON)->ShowWindow(SW_SHOW);
+		m_btnDisConXP.ShowWindow(SW_HIDE);
+		m_btnDisCon.ShowWindow(SW_SHOW);
 	}
 	else // VISTA以下版本，XP等 
 	{
-		GetDlgItem(IDC_BUTTONXP_DISCON)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_BUTTON_DISCON)->ShowWindow(SW_HIDE);
+		m_btnDisConXP.ShowWindow(SW_SHOW);
+		m_btnDisCon.ShowWindow(SW_HIDE);
 	}
 
 
@@ -184,22 +189,22 @@ BOOL CLinkerPage::OnInitDialog()
 	m_btnDisCon.SetDropDownMenu(IDR_DISMENU,0);
 
 	CAccountInfo newUser;
-	newUser.m_username=L"080520s";
-	newUser.m_password=L"181305";
+	newUser.m_username=L"1111111";
+	newUser.m_password=L"2222222";
 	newUser.m_autoDis=true;
 	newUser.m_range=0;
 	newUser.m_savePwd=true;
 	newUser.m_showTip=true;
-	theApp.accounts.Add(newUser);
+	theApp.configXml.SetAccount(newUser);
+	//theApp.accounts.Add(newUser);
 
-	newUser.m_username=L"080519s";
-	newUser.m_password=L"22222";
-	newUser.m_autoDis=false;
-	newUser.m_range=1;
-	newUser.m_savePwd=false;
-	newUser.m_showTip=false;
-	theApp.accounts.Add(newUser);
-
+	//newUser.m_username=L"080519s";
+	//newUser.m_password=L"22222";
+	//newUser.m_autoDis=false;
+	//newUser.m_range=1;
+	//newUser.m_savePwd=false;
+	//newUser.m_showTip=false;
+	//theApp.accounts.Add(newUser);
 
 	for(int i=0;i<theApp.accounts.GetCount();i++)
 	{
@@ -216,8 +221,8 @@ BOOL CLinkerPage::OnInitDialog()
 
 	// 更新界面，设置按钮的可用状态
 	//UpdateData(FALSE);
-	SetBtnStat();
 	InitStat();
+	SetBtnStat();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
 }
@@ -255,7 +260,9 @@ void CLinkerPage::OnEnChangeEditPwd()
 void CLinkerPage::SetItemText(void)
 {
 	TRACE(theApp.curAccount.m_username+L"  ");
-
+	// 保存当前用户设置
+	//m_curAccountNum=m_cboID.GetCurSel();
+	//theApp.accounts[m_curAccountNum]=theApp.curAccount;
 	// 更新界面其他控件状态
 	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
 	if (index>=0)
@@ -289,12 +296,12 @@ void CLinkerPage::SetBtnStat(void)
 	if (theApp.curAccount.m_username!="" && theApp.curAccount.m_password!="")
 	{
 		m_btnConnect.EnableWindow(TRUE);
-		//m_btnDisCon.EnableWindow(TRUE);
+		m_btnDisConXP.EnableWindow(TRUE);
 	}
 	else
 	{
 		m_btnConnect.EnableWindow(FALSE);
-		//m_btnDisCon.EnableWindow(FALSE);
+		m_btnDisConXP.EnableWindow(FALSE);
 
 		m_btnDisCon.SetWindowText(L"断开");
 		m_dis=0;
@@ -342,8 +349,8 @@ void CLinkerPage::OnUpdateDisconall(CCmdUI *pCmdUI)
 void CLinkerPage::OnStnClickedStaticId()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CAccountDlg accountDlg;
-	accountDlg.DoModal();
+	//CAccountDlg accountDlg;
+	//accountDlg.DoModal();
 	UpdateComboBox();
 }
 
@@ -370,6 +377,8 @@ void CLinkerPage::OnBnClickedButtonDiscon()
 
 void CLinkerPage::UpdateComboBox(void)
 {
+	CString curStr;
+	m_cboID.GetWindowText(curStr);
 	int size=m_cboID.GetCount();
 	for (int i=0;i<size;i++)
 	{	
@@ -379,8 +388,6 @@ void CLinkerPage::UpdateComboBox(void)
 	{
 		m_cboID.AddString(theApp.accounts[i].m_username);
 	}
-	CString curStr;
-	m_cboID.GetWindowText(curStr);
 	if (m_cboID.FindStringExact(-1,curStr)==CB_ERR)
 	{
 		m_cboID.SetWindowText(L"");
@@ -433,7 +440,6 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 		if (index==CB_ERR)
 		{
 			theApp.accounts.Add(theApp.curAccount);
-			//m_cboID.AddString(theApp.curAccount.m_username);
 			UpdateComboBox();
 		}
 		else
@@ -475,7 +481,7 @@ void CLinkerPage::OnBnClickedCheckWithsys()
 
 void CLinkerPage::InitStat(void)
 {
-	// 随机启动复选框状态
+	// 随系统启动复选框状态
 	HKEY hRegKey=NULL;
 	CString str=_T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
 	if(RegOpenKey(HKEY_CURRENT_USER,str,&hRegKey) == ERROR_SUCCESS)
@@ -488,10 +494,42 @@ void CLinkerPage::InitStat(void)
 	RegCloseKey(hRegKey);
 	
 	// 用户名列表状态
-	m_cboID.SetCurSel(0);
+	int accountLen=theApp.configXml.GetAccountCount();
+	for (int i=0;i<accountLen;i++)
+	{
+		theApp.accounts.Add(theApp.configXml.GetAccount(i));
+	}
+	UpdateComboBox();
+	m_cboID.SetCurSel(theApp.configXml.GetActiveAccount());
 	OnCbnSelchangeComboId();
 
 	// 自动连接状态
+	m_chkAutoCon.SetCheck(theApp.configXml.GetAutoConnect());
 
 	// 断开按钮状态
+	m_dis=theApp.configXml.GetDisBtnStatus();
+}
+
+void CLinkerPage::OnDestroy()
+{
+	CPropertyPage::OnDestroy();
+
+	// TODO: 在此处添加消息处理程序代码
+
+	// 保存各项设置到xml文件
+	UpdateData(TRUE);
+	// 用户名列表状态
+	int accountLen=theApp.accounts.GetCount();
+	for (int i=0;i<accountLen;i++)
+	{
+		theApp.configXml.SetAccount(theApp.accounts[i]);
+	}
+	theApp.configXml.SetActiveAccount(m_cboID.GetCurSel());
+
+	// 自动连接状态
+	theApp.configXml.SetAutoConnect(m_bAutoCon);
+
+	// 断开按钮状态
+	theApp.configXml.SetDisBtnStatus(m_dis);
+	theApp.configXml.SaveFile();
 }

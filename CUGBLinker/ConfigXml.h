@@ -17,11 +17,12 @@ public:
 	void Init(void);
 	void SaveFile(void);
 	void SetAccount(CAccountInfo& accountInfo);
-	void GetAccount(CAccountInfo& accountInfo);
+	CAccountInfo GetAccount(int i=0);
 	void SetActiveAccount(int val);
 	int GetActiveAccount(void);
 	void SetAutoConnect(int val);
 	int GetAutoConnect(void);
 	void SetDisBtnStatus(int val);
 	int GetDisBtnStatus(void);
+	int GetAccountCount(void);
 };

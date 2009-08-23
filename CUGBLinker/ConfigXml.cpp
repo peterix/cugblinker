@@ -42,16 +42,46 @@ void CConfigXml::SaveFile(void)
 void CConfigXml::SetAccount(CAccountInfo& accountInfo)
 {
 	TiXmlHandle hDoc(&doc);
-	TiXmlElement* accounts=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").ToElement();
-	if (accounts)
+	CStringA accountName="Account_";
+	accountName+=accountInfo.m_username;
+	char* name=accountName.GetBuffer();
+	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").FirstChild(name).ToElement();
+	if (account==NULL)
 	{
-		//TiXmlElement* curAccount=accounts->FirstChild(CStringA("Account_").Append(accountInfo.m_username))->ToElement();
+		TiXmlElement* newAccount=new TiXmlElement(name);
+		TiXmlElement* accounts=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").ToElement();
+		accounts->LinkEndChild(newAccount);
 	}
+	account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").FirstChild(name).ToElement();
+	accountName.ReleaseBuffer();
+	CStringA pwd=CStringA(accountInfo.m_password);
+	account->SetAttribute("password",pwd.GetBuffer());
+	pwd.ReleaseBuffer();
+	
+	account->SetAttribute("range",accountInfo.m_range);
+	account->SetAttribute("savePwd",accountInfo.m_savePwd);
+	account->SetAttribute("maxTraffic",accountInfo.m_maxTraffic);
+	account->SetAttribute("showTip",accountInfo.m_showTip);
+	account->SetAttribute("autoDis",accountInfo.m_autoDis);
 }
 
-void CConfigXml::GetAccount(CAccountInfo& accountInfo)
+CAccountInfo CConfigXml::GetAccount(int i)
 {
-	
+	CAccountInfo accountInfo;
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+	if (account)
+	{
+		accountInfo.m_username=account->Value();
+		accountInfo.m_username=accountInfo.m_username.Mid(8);
+		accountInfo.m_password=account->Attribute("password");
+		account->Attribute("range",&(accountInfo.m_range));
+		account->Attribute("savePwd",&(accountInfo.m_savePwd));
+		account->Attribute("maxTraffic",&(accountInfo.m_maxTraffic));
+		account->Attribute("showTip",&(accountInfo.m_showTip));
+		account->Attribute("autoDis",&(accountInfo.m_autoDis));
+	}
+	return accountInfo;
 }
 
 void CConfigXml::SetActiveAccount(int val)
@@ -100,4 +130,17 @@ int CConfigXml::GetDisBtnStatus(void)
 	TiXmlElement* disBtnStatus=hDoc.FirstChild("CUGBLinker").FirstChild("Common").FirstChild("DisBtnStatus").ToElement();
 	disBtnStatus->Attribute("value",&ret);
 	return ret;
+}
+
+int CConfigXml::GetAccountCount(void)
+{
+	int len=0;
+	TiXmlHandle hDoc(&doc);
+	TiXmlHandle accounts=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts");
+	while(accounts.Child(len).ToElement())
+	{
+		len++;
+	}
+
+	return len;
 }
