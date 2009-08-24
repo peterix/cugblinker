@@ -51,6 +51,8 @@ private:
 	BOOL m_bAutoStart;
 	// 当前所使用系统的版本
 	int m_osVersion;
+	// 保存当前帐号的序号
+	int m_curAccountNum;
 public:
 	void SetBtnStat(void);
 	void InitStat(void);
@@ -70,5 +72,6 @@ public:
 	afx_msg LRESULT OnUpdateInfo(WPARAM wParam = 0,LPARAM lParam = 0);
 	afx_msg void OnBnClickedCheckWithsys();
 	afx_msg void OnDestroy();
-	int m_curAccountNum;
+
+	afx_msg void OnBnClickedSaveAccount();
 };

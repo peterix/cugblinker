@@ -69,6 +69,9 @@ BEGIN_MESSAGE_MAP(CLinkerPage, CPropertyPage)
 	ON_MESSAGE(WM_UPDATEINFO, &CLinkerPage::OnUpdateInfo)
 	ON_BN_CLICKED(IDC_CHECK_WITHSYS, &CLinkerPage::OnBnClickedCheckWithsys)
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_RADIO_IN, &CLinkerPage::OnBnClickedSaveAccount)
+	ON_BN_CLICKED(IDC_RADIO_OUT, &CLinkerPage::OnBnClickedSaveAccount)
+	ON_BN_CLICKED(IDC_CHECK_SAVEPWD, &CLinkerPage::OnBnClickedSaveAccount)
 END_MESSAGE_MAP()
 
 
@@ -238,9 +241,9 @@ void CLinkerPage::OnCbnEditchangeComboId()
 void CLinkerPage::OnCbnSelchangeComboId()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	int sel=m_cboID.GetCurSel();
-	if (sel>=0)
-		m_cboID.GetLBText(sel,theApp.curAccount.m_username);
+	m_curAccountNum=m_cboID.GetCurSel();
+	if (m_curAccountNum>=0)
+		m_cboID.GetLBText(m_curAccountNum,theApp.curAccount.m_username);
 	SetItemText();
 	SetBtnStat();
 }
@@ -254,15 +257,17 @@ void CLinkerPage::OnEnChangeEditPwd()
 
 	// TODO:  在此添加控件通知处理程序代码
 	m_txtPwd.GetWindowText(theApp.curAccount.m_password);
+	// 保存当前用户设置
+	if (m_curAccountNum>=0 && m_curAccountNum<theApp.accounts.GetCount())
+	{
+		theApp.accounts[m_curAccountNum]=theApp.curAccount;
+	}
 	SetBtnStat();
 }
 
 void CLinkerPage::SetItemText(void)
 {
 	TRACE(theApp.curAccount.m_username+L"  ");
-	// 保存当前用户设置
-	//m_curAccountNum=m_cboID.GetCurSel();
-	//theApp.accounts[m_curAccountNum]=theApp.curAccount;
 	// 更新界面其他控件状态
 	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
 	if (index>=0)
@@ -360,6 +365,10 @@ void CLinkerPage::OnBnClickedButtonCon()
 	// 当连接成功时添加新用户到用户列表中
 	UpdateData(TRUE);
 	AfxBeginThread(Connect, NULL);
+
+	CString *str=new CString(L"aaa");
+	int *s=new int(1);
+	OnUpdateInfo((WPARAM)str,(LPARAM)s);
 }
 
 void CLinkerPage::OnBnClickedButtonDiscon()
@@ -384,7 +393,8 @@ void CLinkerPage::UpdateComboBox(void)
 	{	
 		m_cboID.DeleteString(0);
 	}
-	for (int i=0;i<theApp.accounts.GetCount();i++)
+	size=theApp.accounts.GetCount();
+	for (int i=0;i<size;i++)
 	{
 		m_cboID.AddString(theApp.accounts[i].m_username);
 	}
@@ -461,7 +471,7 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 void CLinkerPage::OnBnClickedCheckWithsys()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	UpdateData();
+	UpdateData(TRUE);
 
 	CString fileName('\0',200);
 	GetModuleFileName(NULL,fileName.GetBuffer(),200);
@@ -503,10 +513,17 @@ void CLinkerPage::InitStat(void)
 	int accountLen=theApp.configXml.GetAccountCount();
 	for (int i=0;i<accountLen;i++)
 	{
+		CAccountInfo a=theApp.configXml.GetAccount(i);
 		theApp.accounts.Add(theApp.configXml.GetAccount(i));
 	}
 	UpdateComboBox();
-	m_cboID.SetCurSel(theApp.configXml.GetActiveAccount());
+	m_curAccountNum=theApp.configXml.GetActiveAccount();
+	m_cboID.SetCurSel(m_curAccountNum);
+
+	if (m_curAccountNum>=0 && m_curAccountNum<theApp.accounts.GetCount())
+	{
+		theApp.curAccount=theApp.accounts[m_curAccountNum];
+	}
 	OnCbnSelchangeComboId();
 
 	// 自动连接状态
@@ -535,7 +552,7 @@ void CLinkerPage::OnDestroy()
 	{
 		theApp.configXml.SetAccount(theApp.accounts[i]);
 	}
-	theApp.configXml.SetActiveAccount(m_cboID.GetCurSel());
+	theApp.configXml.SetActiveAccount(m_curAccountNum);
 
 	// 自动连接状态
 	theApp.configXml.SetAutoConnect(m_bAutoCon);
@@ -544,4 +561,15 @@ void CLinkerPage::OnDestroy()
 	theApp.configXml.SetDisBtnStatus(m_dis);
 
 	theApp.configXml.SaveFile();
+}
+
+void CLinkerPage::OnBnClickedSaveAccount()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	// 保存当前用户设置
+	UpdateData(TRUE);
+	if (m_curAccountNum>=0 && m_curAccountNum<theApp.accounts.GetCount())
+	{
+		theApp.accounts[m_curAccountNum]=theApp.curAccount;
+	}
 }
