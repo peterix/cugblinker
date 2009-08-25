@@ -66,7 +66,6 @@ void CAdvComboBox::OnCbnEditupdate()
 	DWORD dwCurSel = GetEditSel();
 	WORD dStart = LOWORD(dwCurSel);
 	WORD dEnd   = HIWORD(dwCurSel);
-	TRACE(L"%d %d %d\n",dStart,dEnd,nLength);
 
 	// 查找并将相符项填入输入框中
 	int nSel = SelectString(-1, str);

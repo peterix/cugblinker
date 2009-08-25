@@ -270,9 +270,13 @@ void CLinkerPage::OnEnChangeEditPwd()
 
 void CLinkerPage::SetItemText(void)
 {
+	if (theApp.accounts.GetCount()>=2)
+	{
+
 	TRACE("Set 0: %S, %S\n",theApp.accounts[0].m_username,theApp.accounts[0].m_password);
 	TRACE("Set 1: %S, %S\n",theApp.accounts[1].m_username,theApp.accounts[1].m_password);
 	TRACE("Set cur: %S, %S\n",theApp.curAccount.m_username,theApp.curAccount.m_password);
+	}
 	// 更新界面其他控件状态
 	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
 	if (index>=0)
@@ -297,8 +301,12 @@ void CLinkerPage::SetItemText(void)
 		m_txtPwd.SetWindowText(L"");
 		m_chkSavePwd.SetCheck(0);
 	}
+	if (theApp.accounts.GetCount()>=2)
+	{
+
 	TRACE("aSet 0: %S, %S\n",theApp.accounts[0].m_username,theApp.accounts[0].m_password);
 	TRACE("aSet 1: %S, %S\n",theApp.accounts[1].m_username,theApp.accounts[1].m_password);
+	}
 }
 
 void CLinkerPage::SetBtnStat(void)
@@ -539,8 +547,11 @@ void CLinkerPage::InitStat(void)
 		SetItemText();
 	}
 
-	TRACE("0: %S, %S\n",theApp.accounts[0].m_username,theApp.accounts[0].m_password);
-	TRACE("1: %S, %S\n",theApp.accounts[1].m_username,theApp.accounts[1].m_password);
+	if (theApp.accounts.GetCount()>=2)
+	{
+		TRACE("0: %S, %S\n",theApp.accounts[0].m_username,theApp.accounts[0].m_password);
+		TRACE("1: %S, %S\n",theApp.accounts[1].m_username,theApp.accounts[1].m_password);
+	}
 
 
 	// 自动连接状态

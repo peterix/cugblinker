@@ -93,7 +93,6 @@ void CAccountDlg::OnBnClickedDelallButton()
 void CAccountDlg::OnLbnSelchangeAccountList()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	TRACE("%d\n",m_lstAccounts.GetSelCount());
 	if (m_lstAccounts.GetSelCount()>0)
 	{
 		m_btnDel.EnableWindow(TRUE);
