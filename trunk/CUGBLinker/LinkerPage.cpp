@@ -378,11 +378,11 @@ void CLinkerPage::OnBnClickedButtonCon()
 	// TODO: 在此添加控件通知处理程序代码
 	// 当连接成功时添加新用户到用户列表中
 	UpdateData(TRUE);
-	//AfxBeginThread(Connect, NULL);
+	AfxBeginThread(Connect, NULL);
 
-	CString *str=new CString(L"aaa");
-	int *s=new int(1);
-	OnUpdateInfo((WPARAM)str,(LPARAM)s);
+	//CString *str=new CString(L"aaa");
+	//int *s=new int(1);
+	//OnUpdateInfo((WPARAM)str,(LPARAM)s);
 }
 
 void CLinkerPage::OnBnClickedButtonDiscon()

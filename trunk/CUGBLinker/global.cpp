@@ -4,7 +4,6 @@
 #include "CUGBLinkerDlg.h"
 #include "LinkerPage.h"
 
-
 UINT Connect(LPVOID pvParam)
 {
 
@@ -14,7 +13,7 @@ UINT Connect(LPVOID pvParam)
 	// 创建socket并连接目标地址
 	CSocket* m_pSocket=new CSocket();
 	m_pSocket->Create();
-	if(0 == m_pSocket->Connect(L"202.204.105.7",80))
+	if(0 == m_pSocket->Connect(L"202.204.105.27",80))
 	{
 		AfxMessageBox(L"网关连接失败！");
 		return -1;
@@ -29,7 +28,7 @@ UINT Connect(LPVOID pvParam)
 		theApp.curAccount.m_username,theApp.curAccount.m_password,range);
 	CStringA sendStr;
 	sendStr.Format( "POST /ipgw/ipgw.ipgw HTTP/1.1\r\n"
-					"Host: 202.204.105.7\r\n"
+					"Host: 202.204.105.27\r\n"
 					"Content-Length: %d\r\n"
 					"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
 					userStr.GetLength());
@@ -43,43 +42,47 @@ UINT Connect(LPVOID pvParam)
 
 	// 接收消息
 
-	CStringA recStr('\0',2000);
+	CStringA recStr('\0',3000);
 	int recLen;
-	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),2000)) == SOCKET_ERROR)
+	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),3000)) == SOCKET_ERROR)
 	{
 		AfxMessageBox(L"接收网关反馈失败！");
 		return -3;
 	}
+	// 编码转换
+	int wcsLen = ::MultiByteToWideChar(CP_UTF8, NULL, recStr.GetBuffer(), recStr.GetLength(), NULL, 0);
+	CString wszStr('\0',wcsLen+1);
+	::MultiByteToWideChar(CP_UTF8, NULL, recStr.GetBuffer(),recStr.GetLength(), wszStr.GetBuffer(), wcsLen);
 	recStr.ReleaseBuffer();
+	wszStr.ReleaseBuffer();
 
 	//对返回信息处理
 	
-	CStringA ans1="<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
-	CStringA ans2="网络连接成功";
+	CString ans1=L"<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
+	CString ans2=L"网络连接成功";
 
 	int* conSuccess=new int(-1);
-	recStr=recStr.Mid(recStr.Find("<table"));
-	Change(&recStr);
+	wszStr=wszStr.Mid(wszStr.Find(L"<table"));
+	Change(&wszStr);
 
 	int pos=0;
-	if((pos=recStr.Find(ans1)) != -1)
+	if((pos=wszStr.Find(ans1)) != -1)
 	{
-		recStr=recStr.Mid(pos+66);
-		recStr=recStr.Left(recStr.Find("</table>"));
+		wszStr=wszStr.Mid(pos+66);
+		wszStr=wszStr.Left(wszStr.Find(L"</table>"));
 	}
-	else if((pos=recStr.Find(ans2)) != -1)
+	else if((pos=wszStr.Find(ans2)) != -1)
 	{
-		recStr=recStr.Mid(pos);
-		recStr=recStr.Left(recStr.Find("</font>"));
+		wszStr=wszStr.Mid(pos);
+		wszStr=wszStr.Left(wszStr.Find(L"</font>"));
 		*conSuccess=1;
 	}
 	else
 	{
-		recStr="连接出错\r\n请登录IP网关连接";
+		wszStr=L"连接出错\r\n请登录IP网关连接";
 	}
-
-	CString* str=new CString('\0',recStr.GetLength());
-	MultiByteToWideChar( CP_ACP, 0, recStr, recStr.GetLength(), str->GetBuffer(), str->GetLength() );
+	
+	CString* str=new CString(wszStr);
 	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)str,(LPARAM)conSuccess);
 
 	delete m_pSocket;
@@ -96,7 +99,7 @@ UINT DisConnect(LPVOID pvParam)
 	// 创建socket并连接目标地址
 	CSocket* m_pSocket=new CSocket();
 	m_pSocket->Create();
-	if(0 == m_pSocket->Connect(L"202.204.105.7",80))
+	if(0 == m_pSocket->Connect(L"202.204.105.27",80))
 	{
 		AfxMessageBox(L"网关连接失败！");
 		return -1;
@@ -113,7 +116,7 @@ UINT DisConnect(LPVOID pvParam)
 	userStr+=disStr;
 	CStringA sendStr;
 	sendStr.Format( "POST /ipgw/ipgw.ipgw HTTP/1.1\r\n"
-					"Host: 202.204.105.7\r\n"
+					"Host: 202.204.105.27\r\n"
 					"Content-Length: %d\r\n"
 					"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
 					userStr.GetLength());
@@ -127,67 +130,70 @@ UINT DisConnect(LPVOID pvParam)
 
 	// 接收消息
 
-	CStringA recStr('\0',2000);
+	CStringA recStr('\0',3000);
 	int recLen;
-	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),2000)) == SOCKET_ERROR)
+	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),3000)) == SOCKET_ERROR)
 	{
 		AfxMessageBox(L"接收网关反馈失败！");
 		return -3;
 	}
+	// 编码转换
+	int wcsLen = ::MultiByteToWideChar(CP_UTF8, NULL, recStr.GetBuffer(), recStr.GetLength(), NULL, 0);
+	CString wszStr('\0',wcsLen+1);
+	::MultiByteToWideChar(CP_UTF8, NULL, recStr.GetBuffer(),recStr.GetLength(), wszStr.GetBuffer(), wcsLen);
 	recStr.ReleaseBuffer();
+	wszStr.ReleaseBuffer();
 
 
 	// 对返回信息处理
-	CStringA ans1="<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
-	CStringA ans2="网络断开成功";
-	CStringA ans3="断开全部连接成功";
+	CString ans1=L"<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
+	CString ans2=L"网络断开成功";
+	CString ans3=L"断开全部连接成功";
 
-	recStr=recStr.Mid(recStr.Find("<table"));
-	Change(&recStr);
+	wszStr=wszStr.Mid(wszStr.Find(L"<table"));
+	Change(&wszStr);
 
 	int* disSuccess=new int(-2);
 	int pos=0;
-	if((pos=recStr.Find(ans1)) != -1)
+	if((pos=wszStr.Find(ans1)) != -1)
 	{
-		recStr=recStr.Mid(pos+66);
-		recStr=recStr.Left(recStr.Find("</table>"));
+		wszStr=wszStr.Mid(pos+66);
+		wszStr=wszStr.Left(wszStr.Find(L"</table>"));
 	}
-	else if((pos=recStr.Find(ans2)) != -1)
+	else if((pos=wszStr.Find(ans2)) != -1)
 	{
-		recStr=recStr.Mid(pos);
-		recStr=recStr.Left(recStr.Find("</table>"));
+		wszStr=wszStr.Mid(pos);
+		wszStr=wszStr.Left(wszStr.Find(L"</table>"));
 		*disSuccess=2;
 	}
-	else if ((pos=recStr.Find(ans3)) != -1)
+	else if ((pos=wszStr.Find(ans3)) != -1)
 	{
-		recStr=recStr.Mid(pos);
-		recStr=recStr.Left(recStr.Find("</table>"));
+		wszStr=wszStr.Mid(pos);
+		wszStr=wszStr.Left(wszStr.Find(L"</table>"));
 		*disSuccess=2;
 	}
 	else
 	{
-		recStr="断开出错\r\n请请登录IP网关断开。";
+		wszStr=L"断开出错\r\n请请登录IP网关断开。";
 	}
 
 	// 像界面发送消息，更新显示
-	CString* str=new CString('\0',recStr.GetLength());
-	MultiByteToWideChar( CP_ACP, 0, recStr, recStr.GetLength(), str->GetBuffer(), str->GetLength() );
+	CString* str=new CString(wszStr);
 	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)str,(LPARAM)disSuccess);
-
 
 	delete m_pSocket;
 	return 0;
 }
 
-void Change(CStringA *str)
+void Change(CString *str)
 {
-	str->Replace("</td>"," ");
-	str->Replace("<td>","");
-	str->Replace("</tr>","\r\n");
-	str->Replace("<tr>","");
-	str->Replace("<table noborder>","");
-	str->Replace("&nbsp;"," ");
-	str->Replace("<br>","\r\n");
-	str->Replace("<p>","\r\n");
-	str->Replace("<td  colspan=2><font color=\"#cc0000\">","");
+	str->Replace(L"</td>",L" ");
+	str->Replace(L"<td>",L"");
+	str->Replace(L"</tr>",L"\r\n");
+	str->Replace(L"<tr>",L"");
+	str->Replace(L"<table noborder>",L"");
+	str->Replace(L"&nbsp;",L" ");
+	str->Replace(L"<br>",L"\r\n");
+	str->Replace(L"<p>",L"\r\n");
+	str->Replace(L"<td  colspan=2><font color=\"#cc0000\">",L"");
 }

@@ -2,4 +2,4 @@
 
 UINT Connect(LPVOID pvParam);
 UINT DisConnect(LPVOID pvParam);
-void Change(CStringA *str);
+void Change(CString *str);
