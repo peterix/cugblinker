@@ -575,10 +575,11 @@ void CLinkerPage::OnDestroy()
 	UpdateData(TRUE);
 	// 用户名列表状态
 	int accountLen=theApp.configXml.GetAccountCount();
-	for (int i=0;i<accountLen;i++)
+	for (int i=accountLen-1;i>=0;i--)
 	{
 		theApp.configXml.DelAccount(i);
 	}
+	theApp.configXml.SaveFile();
 	accountLen=theApp.accounts.GetCount();
 	for (int i=0;i<accountLen;i++)
 	{
