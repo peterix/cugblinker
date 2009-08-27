@@ -54,7 +54,14 @@ void CConfigXml::SetAccount(CAccountInfo& accountInfo)
 	}
 	account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").FirstChild(name).ToElement();
 	accountName.ReleaseBuffer();
-	CStringA pwd=CStringA(accountInfo.m_password);
+	
+	CStringA pwd;
+	if (accountInfo.m_savePwd)
+	{
+		pwd=CStringA(accountInfo.m_password);	
+	}
+	else
+		pwd="";
 	account->SetAttribute("password",pwd.GetBuffer());
 	pwd.ReleaseBuffer();
 	
