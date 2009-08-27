@@ -74,7 +74,7 @@ UINT Connect(LPVOID pvParam)
 	else if((pos=wszStr.Find(ans2)) != -1)
 	{
 		wszStr=wszStr.Mid(pos);
-		wszStr=wszStr.Left(wszStr.Find(L"</font>"));
+		wszStr=wszStr.Left(wszStr.Find(L"</table>"));
 		*conSuccess=1;
 	}
 	else
@@ -187,13 +187,23 @@ UINT DisConnect(LPVOID pvParam)
 
 void Change(CString *str)
 {
+	str->Replace(L"\r\n",L"");
+	str->Replace(L"<tr><td>",L"");
+	str->Replace(L"</td><td>",L" ");
+	str->Replace(L"</td></tr>",L"\r\n");
 	str->Replace(L"</td>",L" ");
 	str->Replace(L"<td>",L"");
 	str->Replace(L"</tr>",L"\r\n");
 	str->Replace(L"<tr>",L"");
+	str->Replace(L"<b>",L"");
+	str->Replace(L"</b>",L"");
 	str->Replace(L"<table noborder>",L"");
 	str->Replace(L"&nbsp;",L" ");
 	str->Replace(L"<br>",L"\r\n");
+	str->Replace(L"<BR>",L"");
 	str->Replace(L"<p>",L"\r\n");
-	str->Replace(L"<td  colspan=2><font color=\"#cc0000\">",L"");
+	str->Replace(L"<td  colspan=2>",L"");
+	str->Replace(L"<font id=flashing style=\"COLOR: #ffffff; FONT-FAMILY: ºÚÌå; HEIGHT: 13px; WIDTH: 100px\">",L"");
+	str->Replace(L"</font>",L"");
+	str->Replace(L"<font color=\"#cc0000\">",L"");	
 }
