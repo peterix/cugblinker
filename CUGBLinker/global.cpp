@@ -9,12 +9,22 @@ BOOLEAN disconnecting=FALSE;
 
 UINT Connect(LPVOID pvParam)
 {
-	if(connecting)return 0;
+	//if (theApp.curAccount.m_username=="" || theApp.curAccount.m_password=="")
+	//	return 0;
+	if (connecting)
+		return 0;
 	connecting=TRUE;
 	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
 	CLinkerPage* pLinkerPage=(CLinkerPage*)&(pMainWnd->m_linkerPage);
 
 	// 创建socket并连接目标地址
+	if (!AfxSocketInit())
+	{
+		AfxMessageBox(IDP_SOCKETS_INIT_FAILED);
+		connecting=FALSE;
+		return FALSE;
+	}
+
 	CSocket* m_pSocket=new CSocket();
 	m_pSocket->Create();
 	if(0 == m_pSocket->Connect(L"202.204.105.27",80))
@@ -75,7 +85,7 @@ UINT Connect(LPVOID pvParam)
 	int pos=0;
 	if((pos=wszStr.Find(ans1)) != -1)
 	{
-		wszStr=wszStr.Mid(pos+66);
+		wszStr=wszStr.Mid(pos+65);
 		wszStr=wszStr.Left(wszStr.Find(L"</table>"));
 	}
 	else if((pos=wszStr.Find(ans2)) != -1)
@@ -99,14 +109,24 @@ UINT Connect(LPVOID pvParam)
 
 UINT DisConnect(LPVOID pvParam)
 {
-	if(disconnecting)return 0;
+	int dis=*(int*)pvParam;
+	//if (dis==1 && (theApp.curAccount.m_username=="" || theApp.curAccount.m_password==""))
+	//	return 0;
+
+	if (disconnecting)
+		return 0;
 	disconnecting=TRUE;
 	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
 	CLinkerPage* pLinkerPage=(CLinkerPage*)&(pMainWnd->m_linkerPage);
 
-	int dis=*(int*)pvParam;
 
 	// 创建socket并连接目标地址
+	if (!AfxSocketInit())
+	{
+		AfxMessageBox(IDP_SOCKETS_INIT_FAILED);
+		disconnecting=FALSE;
+		return FALSE;
+	}
 	CSocket* m_pSocket=new CSocket();
 	m_pSocket->Create();
 	if(0 == m_pSocket->Connect(L"202.204.105.27",80))
@@ -170,7 +190,7 @@ UINT DisConnect(LPVOID pvParam)
 	int pos=0;
 	if((pos=wszStr.Find(ans1)) != -1)
 	{
-		wszStr=wszStr.Mid(pos+66);
+		wszStr=wszStr.Mid(pos+65);
 		wszStr=wszStr.Left(wszStr.Find(L"</table>"));
 	}
 	else if((pos=wszStr.Find(ans2)) != -1)
