@@ -378,9 +378,9 @@ void CLinkerPage::OnBnClickedButtonCon()
 	UpdateData(TRUE);
 	AfxBeginThread(Connect, NULL);
 
-	CString *str=new CString(L"aaa");
-	int *s=new int(1);
-	OnUpdateInfo((WPARAM)str,(LPARAM)s);
+	//CString *str=new CString(L"aaa");
+	//int *s=new int(1);
+	//OnUpdateInfo((WPARAM)str,(LPARAM)s);
 }
 
 void CLinkerPage::OnBnClickedButtonDiscon()
