@@ -4,9 +4,13 @@
 #include "CUGBLinkerDlg.h"
 #include "LinkerPage.h"
 
+BOOLEAN connecting=FALSE;
+BOOLEAN disconnecting=FALSE;
+
 UINT Connect(LPVOID pvParam)
 {
-
+	if(connecting)return 0;
+	connecting=TRUE;
 	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
 	CLinkerPage* pLinkerPage=(CLinkerPage*)&(pMainWnd->m_linkerPage);
 
@@ -16,6 +20,7 @@ UINT Connect(LPVOID pvParam)
 	if(0 == m_pSocket->Connect(L"202.204.105.27",80))
 	{
 		AfxMessageBox(L"网关连接失败！");
+		connecting=FALSE;
 		return -1;
 	}
 
@@ -37,6 +42,7 @@ UINT Connect(LPVOID pvParam)
 	if (m_pSocket->Send(sendStr,sendStr.GetLength(),0) == SOCKET_ERROR) 
 	{
 		AfxMessageBox(L"发送帐号信息失败！");
+		connecting=FALSE;
 		return -2;
 	}
 
@@ -47,6 +53,7 @@ UINT Connect(LPVOID pvParam)
 	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),3000)) == SOCKET_ERROR)
 	{
 		AfxMessageBox(L"接收网关反馈失败！");
+		connecting=FALSE;
 		return -3;
 	}
 	// 编码转换
@@ -86,11 +93,14 @@ UINT Connect(LPVOID pvParam)
 	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)str,(LPARAM)conSuccess);
 
 	delete m_pSocket;
+	connecting=FALSE;
 	return 0;
 }
 
 UINT DisConnect(LPVOID pvParam)
 {
+	if(disconnecting)return 0;
+	disconnecting=TRUE;
 	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
 	CLinkerPage* pLinkerPage=(CLinkerPage*)&(pMainWnd->m_linkerPage);
 
@@ -102,6 +112,7 @@ UINT DisConnect(LPVOID pvParam)
 	if(0 == m_pSocket->Connect(L"202.204.105.27",80))
 	{
 		AfxMessageBox(L"网关连接失败！");
+		disconnecting=FALSE;
 		return -1;
 	}
 
@@ -125,6 +136,7 @@ UINT DisConnect(LPVOID pvParam)
 	if (m_pSocket->Send(sendStr,sendStr.GetLength(),0) == SOCKET_ERROR) 
 	{
 		AfxMessageBox(L"发送帐号信息失败！");
+		disconnecting=FALSE;
 		return -2;
 	}
 
@@ -135,6 +147,7 @@ UINT DisConnect(LPVOID pvParam)
 	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),3000)) == SOCKET_ERROR)
 	{
 		AfxMessageBox(L"接收网关反馈失败！");
+		disconnecting=FALSE;
 		return -3;
 	}
 	// 编码转换
@@ -182,6 +195,7 @@ UINT DisConnect(LPVOID pvParam)
 	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)str,(LPARAM)disSuccess);
 
 	delete m_pSocket;
+	disconnecting=FALSE;
 	return 0;
 }
 
