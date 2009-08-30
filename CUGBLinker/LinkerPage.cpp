@@ -378,9 +378,7 @@ void CLinkerPage::OnBnClickedButtonCon()
 	UpdateData(TRUE);
 	AfxBeginThread(Connect, NULL);
 
-	//CString *str=new CString(L"aaa");
-	//int *s=new int(1);
-	//OnUpdateInfo((WPARAM)str,(LPARAM)s);
+	m_txtInfo.SetWindowText(L"连接中…");
 }
 
 void CLinkerPage::OnBnClickedButtonDiscon()
@@ -390,6 +388,7 @@ void CLinkerPage::OnBnClickedButtonDiscon()
 	if (m_osVersion<6) // VISTA以下版本，XP等
 		m_dis=1;
 	AfxBeginThread(DisConnect, &m_dis);
+	m_txtInfo.SetWindowText(L"断开中…");
 }
 
 // 当用户列表改变后需要更新ComboBox内容
