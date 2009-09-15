@@ -37,7 +37,7 @@ BOOL CTipStatic::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 	return TRUE;
 }
 
-HBRUSH CTipStatic::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/)
+HBRUSH CTipStatic::CtlColor(CDC* pDC, UINT /*nCtlColor*/)
 {
 	// TODO:  在此更改 DC 的任何属性
 	DWORD dwStyle = GetStyle();
@@ -46,6 +46,7 @@ HBRUSH CTipStatic::CtlColor(CDC* /*pDC*/, UINT /*nCtlColor*/)
 		// Turn on notify flag to get mouse messages and STN_CLICKED.
 		// Otherwise, I'll never get any mouse clicks!
 		::SetWindowLong(m_hWnd, GWL_STYLE, dwStyle | SS_NOTIFY);
+		pDC-> SetTextColor(RGB(0,0,255));
 	}
 
 	// TODO:  如果不应调用父级的处理程序，则返回非 null 画笔

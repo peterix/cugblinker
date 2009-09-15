@@ -610,3 +610,8 @@ void CLinkerPage::OnBnClickedSaveAccount()
 	else
 		m_chkAutoCon.EnableWindow(FALSE);
 }
+void CLinkerPage::OnStnClickedStaticId(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: 在此添加控件通知处理程序代码
+	*pResult = 0;
+}

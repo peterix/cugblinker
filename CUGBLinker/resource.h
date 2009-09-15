@@ -25,13 +25,23 @@
 #define IDC_BUTTON1                     1020
 #define IDC_DEL_BUTTON                  1020
 #define IDC_BUTTONXP_DISCON             1020
+#define IDC_BUTTON_SPEED                1020
 #define IDC_SPLIT1                      1021
 #define IDC_SPLIT2                      1022
 #define IDC_EDIT1                       1023
 #define IDC_CONNECTINFO                 1023
+#define IDC_EDIT_DISSIZE                1023
 #define IDC_ACCOUNT_LIST                1024
 #define IDC_BUTTON2                     1025
 #define IDC_DELALL_BUTTON               1025
+#define IDC_BUTTON_TRAFFIC              1025
+#define IDC_CHECK1                      1026
+#define IDC_CHECK_DISTIP                1026
+#define IDC_CHECK2                      1027
+#define IDC_CHECK_AUTODIS               1027
+#define IDC_CHECK3                      1028
+#define IDC_BUTTON4                     1030
+#define IDC_SYSLINK2                    1043
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_DISCON                       32773
@@ -43,7 +53,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1026
+#define _APS_NEXT_CONTROL_VALUE         1045
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
