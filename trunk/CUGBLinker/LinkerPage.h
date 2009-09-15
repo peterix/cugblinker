@@ -74,4 +74,5 @@ public:
 	afx_msg void OnDestroy();
 
 	afx_msg void OnBnClickedSaveAccount();
+	afx_msg void OnStnClickedStaticId(NMHDR *pNMHDR, LRESULT *pResult);
 };

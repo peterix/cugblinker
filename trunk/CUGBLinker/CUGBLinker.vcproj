@@ -49,7 +49,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
+				AdditionalIncludeDirectories="..\Include"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;WPCAP;HAVE_REMOTE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -73,7 +74,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="wpcap.lib ws2_32.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\Lib"
 				UACExecutionLevel="0"
 				UACUIAccess="false"
 				GenerateDebugInformation="true"
@@ -228,6 +231,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StatisticButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -310,7 +317,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MemDC.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StatisticButton.h"
 				>
 			</File>
 			<File

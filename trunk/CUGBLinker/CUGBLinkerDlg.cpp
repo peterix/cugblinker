@@ -64,7 +64,7 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 	// 添加连接界面
 	m_sheet.AddPage(&m_linkerPage);
 	// 添加流量统计界面
-	//m_sheet.AddPage(&m_trafficPage);
+	m_sheet.AddPage(&m_trafficPage);
 
 	m_sheet.Create(this, WS_CHILD | WS_VISIBLE, WS_EX_CONTROLPARENT);
 	//调整TabControl大小
