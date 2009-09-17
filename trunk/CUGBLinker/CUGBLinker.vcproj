@@ -49,7 +49,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\Include"
+				AdditionalIncludeDirectories=".\Include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;WPCAP;HAVE_REMOTE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -76,7 +76,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="wpcap.lib ws2_32.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\Lib"
+				AdditionalLibraryDirectories=".\Lib"
 				UACExecutionLevel="0"
 				UACUIAccess="false"
 				GenerateDebugInformation="true"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\Include"
+				AdditionalIncludeDirectories=".\Include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;WPCAP;HAVE_REMOTE"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -161,7 +161,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="wpcap.lib ws2_32.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\Lib"
+				AdditionalLibraryDirectories=".\Lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
