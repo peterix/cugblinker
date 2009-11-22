@@ -3,15 +3,14 @@
 #include "afxwin.h"
 #include "global.h"
 
-class CStatisticButton :
+class CTrafficButton :
 	public CButton
 {
 public:
-	CStatisticButton(void);
-	CStatisticButton(bool du);
+	CTrafficButton(void);
 
 public:
-	virtual ~CStatisticButton(void);
+	virtual ~CTrafficButton(void);
 
 public:
 	DECLARE_MESSAGE_MAP()
@@ -61,13 +60,4 @@ public:
 	int gridscrollyspeed; 
 	int netupdatespeed;			// Should be set via SetUpdateSpeet method
 	int gridupdatespeed;
-
-public:
-	bool Startup(char * dev);
-public:
-	char * FindDevs(void);
-public:
-	void isDu(void);
-public:
-	bool isdu;
 };
