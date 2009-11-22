@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "StatisticButton.h"
-#include "MemDC.h"
+#include "MyDC.h"
 #include "global.h"
 #include <pcap.h>
 
