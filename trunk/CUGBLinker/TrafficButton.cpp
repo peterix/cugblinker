@@ -4,12 +4,6 @@
 #include "global.h"
 #include <pcap.h>
 
-//class CLinker;
-//CLinker *h_linker;
-extern UINT Connect(LPVOID pvParam);
-extern UINT DisConnect(LPVOID pvParam);
-
-
 CString AllTraffic;
 CString Total;
 
