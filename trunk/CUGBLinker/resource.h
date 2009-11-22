@@ -42,6 +42,8 @@
 #define IDC_CHECK3                      1028
 #define IDC_BUTTON4                     1030
 #define IDC_SYSLINK2                    1043
+#define IDC_PROGRESS_TOTAL              1046
+#define IDC_STATIC_TOTAL                1047
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_DISCON                       32773
@@ -53,7 +55,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1045
+#define _APS_NEXT_CONTROL_VALUE         1048
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
