@@ -1,4 +1,5 @@
 #pragma once
+#include "trafficbutton.h"
 
 
 // CTrafficPage 对话框
@@ -18,4 +19,11 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+public:
+	CTrafficButton m_btnSpeed;
+	CProgressCtrl m_proTotal;
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	virtual BOOL OnInitDialog();
+private:
+	CFont textFont;
 };
