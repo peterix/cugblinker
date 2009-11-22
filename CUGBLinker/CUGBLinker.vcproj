@@ -234,10 +234,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StatisticButton.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -275,6 +271,10 @@
 			</File>
 			<File
 				RelativePath=".\TipStatic.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TrafficButton.cpp"
 				>
 			</File>
 			<File
@@ -328,10 +328,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StatisticButton.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
@@ -349,6 +345,10 @@
 			</File>
 			<File
 				RelativePath=".\TipStatic.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TrafficButton.h"
 				>
 			</File>
 			<File
