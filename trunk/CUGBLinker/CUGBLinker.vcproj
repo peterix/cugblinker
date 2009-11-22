@@ -320,7 +320,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MemDC.h"
+				RelativePath=".\MyDC.h"
 				>
 			</File>
 			<File
