@@ -1,25 +1,5 @@
 #pragma once
 
-/*******************************************
-
-	MFTrafficButton
-
-	Version:	1.0
-	Date:		31.10.2001
-	Author:		Michael Fatzi
-	Mail:		Michael_Fatzi@hotmail.com
-	Copyright 1996-1997, Keith Rule
-
-	You may freely use or modify this code provided this
-	Copyright is included in all derived versions.
-	
-	History: 10.2001 Startup
-
-	Handy little button control to display current 
-	nettraffic as graph in a button.
-
-********************************************/
-//以上为引用声明，自己对代码做了修改
 #include "afxwin.h"
 #include "global.h"
 
