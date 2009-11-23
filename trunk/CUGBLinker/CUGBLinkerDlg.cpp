@@ -29,6 +29,7 @@ extern HANDLE	g_hValue;
 
 CCUGBLinkerDlg::CCUGBLinkerDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CCUGBLinkerDlg::IDD, pParent)
+	, alldevs(NULL)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -43,6 +44,7 @@ BEGIN_MESSAGE_MAP(CCUGBLinkerDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_SHOWTASK,OnShowTask)
+	ON_MESSAGE(WM_UPDATENOTIFY, &CCUGBLinkerDlg::UpdateNotify)
 	ON_WM_SYSCOMMAND()
 	ON_WM_CLOSE()
 END_MESSAGE_MAP()
@@ -53,6 +55,8 @@ END_MESSAGE_MAP()
 BOOL CCUGBLinkerDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+	//// 查找网卡设备
+	//alldevs=finddevs();
 
 	// 设置此对话框的图标。当应用程序主窗口不是对话框时，框架将自动
 	//  执行此操作
@@ -76,10 +80,11 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 	m_sheet.MoveWindow(frameRect);
 	m_sheet.GetClientRect(&m_sheetRect);
 	m_sheet.GetTabControl()->MoveWindow(m_sheetRect);
+	m_sheet.SetActivePage(1);
 	m_sheet.SetActivePage(0);
 
 	// 设置托盘图标
-	nid.cbSize=(DWORD)sizeof(NOTIFYICONDATA); 
+	nid.cbSize=NOTIFYICONDATA_V2_SIZE;//(DWORD)sizeof(NOTIFYICONDATA); 
 	nid.hWnd=this->m_hWnd; 
 	nid.uID=IDR_MAINFRAME; 
 	nid.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP ; 
@@ -90,6 +95,25 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 
 	//设置窗口属性
 	SetProp(m_hWnd,g_szPropName,g_hValue);
+
+
+	//if (alldevs)
+	//{
+	//	nics=new nicdev;
+	//	nics->id=alldevs->name;
+	//	nics->description=alldevs->description;
+	//	nics->info=L"";
+	//	nics->next=NULL;
+	//}
+	//for(pcap_if_t* d=alldevs->next;d;d=d->next)
+	//{
+	//	nicdev* newNic=new nicdev;
+	//	newNic->id=d->name;
+	//	newNic->info=L"";
+	//	newNic->next=NULL;
+	//	nics->next=newNic;
+	//}
+	//pcap_freealldevs(alldevs);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -212,8 +236,8 @@ LRESULT CCUGBLinkerDlg::OnShowTask(WPARAM wParam,LPARAM lParam)
 			}
 			else
 			{
-			ShowWindow(SW_SHOW);//简单的显示主窗口完事儿 
-			ShowWindow(SW_SHOWNORMAL); //可以避免原来的最小化
+				ShowWindow(SW_SHOW);//简单的显示主窗口完事儿 
+				ShowWindow(SW_SHOWNORMAL); //可以避免原来的最小化
 			}
 		} 
 		break; 
@@ -226,4 +250,23 @@ void CCUGBLinkerDlg::OnClose()
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	Shell_NotifyIcon(NIM_DELETE,&nid);//删除托盘区图标
 	CDialog::OnClose();
+}
+
+LRESULT CCUGBLinkerDlg::UpdateNotify(WPARAM wParam, LPARAM lParam)
+{
+	CString* strInfo=(CString*)wParam;
+	int* flag=(int*)lParam;//0不成功，1连接成功，2断开成功
+
+	// 弹出托盘提示气球
+	nid.cbSize=NOTIFYICONDATA_V2_SIZE;//sizeof(NOTIFYICONDATA);
+	nid.uFlags = NIF_INFO;
+	_tcscpy_s(nid.szInfo, *strInfo);
+	nid.dwInfoFlags = *flag;
+	_tcscpy_s(nid.szInfoTitle,L"提示");
+
+	Shell_NotifyIcon(NIM_MODIFY, &nid);
+
+	if(strInfo)delete strInfo;
+	if(flag)delete flag;
+	return 0;
 }

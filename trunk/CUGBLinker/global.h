@@ -1,4 +1,11 @@
+#pragma once
+
 #define WM_UPDATEINFO WM_USER+200
+#define WM_UPDATENOTIFY WM_USER+201
+
+#define BALLOON_ERROR NIIF_ERROR
+#define BALLOON_INFO NIIF_INFO
+#define BALLOON_WARNING NIIF_WARNING
 
 #define PLOTGRANULATRITY 2		// Defines the width of the rectangle representing a bar in the diagram
 
@@ -12,6 +19,20 @@
 #define GRIDSCROLLXSPEED -1		// How fast grid scrolls in x direction
 #define GRIDSCROLLYSPEED 0		// How fast grid scrolls in y direction
 
+// Íø¿¨ÐÅÏ¢
+typedef struct nicdev_t 
+{
+	struct nicdev_t* next;
+	CString id;
+	CString description;
+	CString info;
+}nicdev;
+
 UINT Connect(LPVOID pvParam);
 UINT DisConnect(LPVOID pvParam);
 void Change(CString *str);
+
+pcap_if_t* finddevs();
+char* iptos(u_long in);
+char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen);
+void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u_char *pkt_data);

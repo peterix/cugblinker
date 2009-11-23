@@ -26,4 +26,6 @@ public:
 	void SetDisBtnStatus(int val);
 	int GetDisBtnStatus(void);
 	int GetAccountCount(void);
+	void SetCurNIC(CString nic);
+	CString GetCurNIC(void);
 };

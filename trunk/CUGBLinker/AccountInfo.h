@@ -15,6 +15,7 @@ public:
 	INT		m_maxTraffic;	//流量控制阈值
 	BOOL	m_showTip;		//超流量时是否提示
 	BOOL	m_autoDis;		//超流量时是否自动断网
+	CString m_curNIC;		//当前统计流量的网卡
 
 	//随系统启动项和自动连接应归属于软件设置
 	//BOOL	m_autoCon;		//是否自动连接
