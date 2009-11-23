@@ -1,6 +1,7 @@
 #pragma once
 #include "trafficbutton.h"
 #include "afxwin.h"
+#include "tipstatic.h"
 
 
 // CTrafficPage 对话框
@@ -28,4 +29,10 @@ public:
 	CStatic m_lblTotal;
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	virtual BOOL OnInitDialog();
+	CTipStatic m_lblCurDev;
+	afx_msg void OnStnClickedStaticNic();
+	// 当前统计流量的网卡
+	CString m_curNIC;
+	afx_msg void OnDestroy();
+	CString GetNICDescription(CString nic);
 };

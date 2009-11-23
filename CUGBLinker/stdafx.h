@@ -41,6 +41,7 @@
 #include <afxsock.h>            // MFC 套接字扩展
 
 
+#include <pcap.h>				// WinPcap 头文件
 
 
 

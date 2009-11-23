@@ -241,3 +241,91 @@ void Change(CString *str)
 	str->Replace(L"</font>",L"");
 	str->Replace(L"<font color=\"#cc0000\">",L"");	
 }
+
+pcap_if_t* finddevs()
+{
+	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
+
+	char errbuf[PCAP_ERRBUF_SIZE];
+
+	pcap_if_t *alldevs;
+
+	/* Retrieve the device list */
+	if(pcap_findalldevs(&alldevs, errbuf) == -1)
+	{
+		CString* str=new CString();
+		str->Format(L"Error in pcap_findalldevs: %s",errbuf);
+		int* flag=new int(BALLOON_ERROR);
+		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)str,(LPARAM)flag);
+	}
+	return alldevs;
+}
+
+#define IPTOSBUFFERS    12
+char* iptos(u_long in)	// From tcptraceroute, convert a numeric IP address to a string
+{
+	static char output[IPTOSBUFFERS][3*4+3+1];
+	static short which;
+	u_char *p;
+
+	p = (u_char *)&in;
+	which = (which + 1 == IPTOSBUFFERS ? 0 : which + 1);
+	_snprintf_s(output[which], sizeof(output[which]), sizeof(output[which]),"%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
+	return output[which];
+}
+
+char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen)
+{
+	socklen_t sockaddrlen;
+	sockaddrlen = sizeof(struct sockaddr_in6);
+
+	if(getnameinfo(sockaddr, 
+		sockaddrlen, 
+		address, 
+		addrlen, 
+		NULL, 
+		0, 
+		NI_NUMERICHOST) != 0) address = NULL;
+
+	return address;
+}
+
+void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u_char *pkt_data)
+{
+	struct timeval *old_ts = (struct timeval *)state;
+	u_int delay;
+	LARGE_INTEGER Bps,Pps;
+	struct tm ltime;
+	char timestr[16];
+	time_t local_tv_sec;
+
+	/* Calculate the delay in microseconds from the last sample. */
+	/* This value is obtained from the timestamp that the associated with the sample. */
+	delay=(header->ts.tv_sec - old_ts->tv_sec) * 1000000 - old_ts->tv_usec + header->ts.tv_usec;
+	/* Get the number of Bits per second */
+	Bps.QuadPart=(((*(LONGLONG*)(pkt_data + 8)) * 1000000) / (delay));
+	/*                                                   ^
+														 |
+														 |
+					delay is expressed in microseconds --
+	*/
+
+	/* Get the number of Packets per second */
+	Pps.QuadPart=(((*(LONGLONG*)(pkt_data)) * 1000000) / (delay));
+
+	/* Convert the timestamp to readable format */
+	local_tv_sec = header->ts.tv_sec;
+	localtime_s(&ltime, &local_tv_sec);
+	strftime( timestr, sizeof timestr, "%H:%M:%S", &ltime);
+
+	/* Print timestamp*/
+	printf("%s ", timestr);
+
+	/* Print the samples */
+	printf("BPS=%I64u ", Bps.QuadPart);
+	printf("PPS=%I64u\n", Pps.QuadPart);
+
+	//store current timestamp
+	old_ts->tv_sec=header->ts.tv_sec;
+	old_ts->tv_usec=header->ts.tv_usec;
+}

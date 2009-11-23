@@ -226,6 +226,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DeviceDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\global.cpp"
 				>
 			</File>
@@ -309,6 +313,10 @@
 			</File>
 			<File
 				RelativePath=".\CUGBLinkerDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DeviceDlg.h"
 				>
 			</File>
 			<File

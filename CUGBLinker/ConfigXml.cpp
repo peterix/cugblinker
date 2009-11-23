@@ -161,3 +161,22 @@ int CConfigXml::GetAccountCount(void)
 
 	return len;
 }
+
+void CConfigXml::SetCurNIC(CString nic)
+{
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* disBtnStatus=hDoc.FirstChild("CUGBLinker").FirstChild("Common").FirstChild("CurNIC").ToElement();
+	CStringA temp=CStringA(nic);
+	disBtnStatus->SetAttribute("value",temp.GetBuffer());
+	temp.ReleaseBuffer();
+}
+
+CString CConfigXml::GetCurNIC(void)
+{
+	CString nic;
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* disBtnStatus=hDoc.FirstChild("CUGBLinker").FirstChild("Common").FirstChild("CurNIC").ToElement();
+	nic=disBtnStatus->Attribute("value");
+	nic.ReleaseBuffer();
+	return nic;
+}

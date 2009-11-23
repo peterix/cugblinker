@@ -10,6 +10,7 @@
 #define IDR_MENU1                       133
 #define IDR_DISMENU                     133
 #define IDD_ACCOUNT_DIALOG              135
+#define IDD_DEVICE_DIALOG               136
 #define IDC_BUTTON_CON                  1000
 #define IDC_BUTTON_DISCON               1002
 #define IDC_STATIC_ID                   1003
@@ -31,6 +32,7 @@
 #define IDC_EDIT1                       1023
 #define IDC_CONNECTINFO                 1023
 #define IDC_EDIT_DISSIZE                1023
+#define IDC_EDIT_DEVICE                 1023
 #define IDC_ACCOUNT_LIST                1024
 #define IDC_BUTTON2                     1025
 #define IDC_DELALL_BUTTON               1025
@@ -45,6 +47,8 @@
 #define IDC_STATIC_NIC                  1045
 #define IDC_PROGRESS_TOTAL              1046
 #define IDC_STATIC_TOTAL                1047
+#define IDC_LIST1                       1048
+#define IDC_LIST_DEVICE                 1048
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_DISCON                       32773
@@ -54,10 +58,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        136
+#define _APS_NEXT_RESOURCE_VALUE        137
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1046
-#define _APS_NEXT_CONTROL_VALUE         1048
+#define _APS_NEXT_CONTROL_VALUE         1049
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

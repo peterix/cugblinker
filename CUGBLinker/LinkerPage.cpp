@@ -369,6 +369,8 @@ void CLinkerPage::OnStnClickedStaticId()
 	CAccountDlg accountDlg;
 	accountDlg.DoModal();
 	UpdateComboBox();
+	// 设置提示信息
+	m_lblID.SetText(L"单机此处管理帐号");
 }
 
 void CLinkerPage::OnBnClickedButtonCon()
@@ -437,7 +439,7 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 
 	// 弹出托盘提示气球
 	strInfo->Replace(L"\n",L"");
-	pMainWnd->nid.cbSize=sizeof(NOTIFYICONDATA);
+	pMainWnd->nid.cbSize=NOTIFYICONDATA_V2_SIZE;//sizeof(NOTIFYICONDATA);
 	pMainWnd->nid.uFlags = NIF_INFO;
 	_tcscpy_s(pMainWnd->nid.szInfo,*strInfo);
 	if (*success==1)//连接成功
@@ -480,8 +482,8 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 		//}
 	}
 	m_txtPwd.SetWindowText(tempStr);
-	delete strInfo;
-	delete success;
+	if(strInfo) delete strInfo;
+	if(success) delete success;
 	return 0;
 }
 

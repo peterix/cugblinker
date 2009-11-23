@@ -35,7 +35,10 @@ public:
 	CLinkerPage m_linkerPage; // 网关连接页面
 	CTrafficPage m_trafficPage; // 流量信息页面
 	NOTIFYICONDATA nid;
+	pcap_if_t* alldevs; // 网卡
+	
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg LRESULT OnShowTask(WPARAM wParam,LPARAM lParam);
+	afx_msg LRESULT UpdateNotify(WPARAM wParam = 0,LPARAM lParam = 0);
 	afx_msg void OnClose();
 };
