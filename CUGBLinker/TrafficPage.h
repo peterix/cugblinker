@@ -2,7 +2,7 @@
 #include "trafficbutton.h"
 #include "afxwin.h"
 #include "tipstatic.h"
-
+#include "LinkerPage.h"
 
 // CTrafficPage ¶Ô»°¿ò
 
@@ -33,6 +33,7 @@ public:
 	CEdit m_txtMaxTraffic;
 	CButton m_chkShowTip;
 	CButton m_chkAutoDis;
+	CLinkerPage* pLinkerPage;
 
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	virtual BOOL OnInitDialog();
@@ -42,4 +43,6 @@ public:
 	CString GetNICDescription(CString nic);
 	afx_msg void OnBnClickedCheckDistip();
 	afx_msg void OnBnClickedCheckAutodis();
+	afx_msg void OnEnChangeEditDissize();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

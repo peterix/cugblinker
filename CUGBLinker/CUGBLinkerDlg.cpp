@@ -69,6 +69,7 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 	m_sheet.AddPage(&m_linkerPage);
 	// 添加流量统计界面
 	m_sheet.AddPage(&m_trafficPage);
+	m_sheet.SetActivePage(1);
 
 	m_sheet.Create(this, WS_CHILD | WS_VISIBLE, WS_EX_CONTROLPARENT);
 	//调整TabControl大小
@@ -80,7 +81,6 @@ BOOL CCUGBLinkerDlg::OnInitDialog()
 	m_sheet.MoveWindow(frameRect);
 	m_sheet.GetClientRect(&m_sheetRect);
 	m_sheet.GetTabControl()->MoveWindow(m_sheetRect);
-	m_sheet.SetActivePage(1);
 	m_sheet.SetActivePage(0);
 
 	// 设置托盘图标

@@ -71,7 +71,7 @@ void CConfigXml::SetAccount(CAccountInfo& accountInfo)
 	account->SetAttribute("range",accountInfo.m_range);
 	account->SetAttribute("savePwd",accountInfo.m_savePwd);
 	account->SetDoubleAttribute("curTraffic",accountInfo.m_curTraffic);
-	account->SetDoubleAttribute("maxTraffic",accountInfo.m_maxTraffic);
+	account->SetAttribute("maxTraffic",accountInfo.m_maxTraffic);
 	account->SetAttribute("showTip",accountInfo.m_showTip);
 	account->SetAttribute("autoDis",accountInfo.m_autoDis);
 }
@@ -186,96 +186,99 @@ CString CConfigXml::GetCurNIC(void)
 	return nic;
 }
 
-void CConfigXml::SetCurTraffic(int i,double curTraffic)
+void CConfigXml::SetCurTraffic(CAccountInfo& accountInfo)
 {
 	TiXmlHandle hDoc(&doc);
-	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+	CStringA accountName="Account_";
+	accountName+=accountInfo.m_username;
+	char* name=accountName.GetBuffer();
+	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").FirstChild(name).ToElement();
 	if (account)
 	{
-		account->SetDoubleAttribute("curTraffic",curTraffic);
+		account->SetDoubleAttribute("curTraffic",accountInfo.m_curTraffic);
 	}
 }
 
-double CConfigXml::GetCurTraffic(int i)
-{
-	double curTraffic;
-	TiXmlHandle hDoc(&doc);
-	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-	if (account)
-	{
-		account->Attribute("curTraffic",&curTraffic);
-	}
-	return curTraffic;
-}
-
-void CConfigXml::SetMaxTraffic(int i,double maxTraffic)
-{
-	TiXmlHandle hDoc(&doc);
-	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-	if (account)
-	{
-		account->SetDoubleAttribute("maxTraffic",maxTraffic);
-	}
-
-}
-
-double CConfigXml::GetMaxTraffic(int i)
-{
-	double maxTraffic;
-	TiXmlHandle hDoc(&doc);
-	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-	if (account)
-	{
-		account->Attribute("maxTraffic",&maxTraffic);
-	}
-	return maxTraffic;
-
-}
-
-void CConfigXml::SetShowTip(int i,int showTip)
-{
-	TiXmlHandle hDoc(&doc);
-	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-	if (account)
-	{
-		account->SetAttribute("showTip",showTip);
-	}
-
-}
-
-int CConfigXml::GetShowTip(int i)
-{
-	int showTip;
-	TiXmlHandle hDoc(&doc);
-	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-	if (account)
-	{
-		account->Attribute("showTip",&showTip);
-	}
-	return showTip;
-
-}
-
-void CConfigXml::SetAutoDis(int i,int autoDis)
-{
-	TiXmlHandle hDoc(&doc);
-	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-	if (account)
-	{
-		account->SetAttribute("autoDis",autoDis);
-	}
-
-}
-
-int CConfigXml::GetAutoDis(int i)
-{
-	int autoDis;
-	TiXmlHandle hDoc(&doc);
-	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-	if (account)
-	{
-		account->Attribute("autoDis",&autoDis);
-	}
-	return autoDis;
-
-}
+//double CConfigXml::GetCurTraffic(int i)
+//{
+//	double curTraffic;
+//	TiXmlHandle hDoc(&doc);
+//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+//	if (account)
+//	{
+//		account->Attribute("curTraffic",&curTraffic);
+//	}
+//	return curTraffic;
+//}
+//
+//void CConfigXml::SetMaxTraffic(int i,double maxTraffic)
+//{
+//	TiXmlHandle hDoc(&doc);
+//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+//	if (account)
+//	{
+//		account->SetDoubleAttribute("maxTraffic",maxTraffic);
+//	}
+//
+//}
+//
+//double CConfigXml::GetMaxTraffic(int i)
+//{
+//	double maxTraffic;
+//	TiXmlHandle hDoc(&doc);
+//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+//	if (account)
+//	{
+//		account->Attribute("maxTraffic",&maxTraffic);
+//	}
+//	return maxTraffic;
+//
+//}
+//
+//void CConfigXml::SetShowTip(int i,int showTip)
+//{
+//	TiXmlHandle hDoc(&doc);
+//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+//	if (account)
+//	{
+//		account->SetAttribute("showTip",showTip);
+//	}
+//
+//}
+//
+//int CConfigXml::GetShowTip(int i)
+//{
+//	int showTip;
+//	TiXmlHandle hDoc(&doc);
+//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+//	if (account)
+//	{
+//		account->Attribute("showTip",&showTip);
+//	}
+//	return showTip;
+//
+//}
+//
+//void CConfigXml::SetAutoDis(int i,int autoDis)
+//{
+//	TiXmlHandle hDoc(&doc);
+//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+//	if (account)
+//	{
+//		account->SetAttribute("autoDis",autoDis);
+//	}
+//
+//}
+//
+//int CConfigXml::GetAutoDis(int i)
+//{
+//	int autoDis;
+//	TiXmlHandle hDoc(&doc);
+//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
+//	if (account)
+//	{
+//		account->Attribute("autoDis",&autoDis);
+//	}
+//	return autoDis;
+//
+//}

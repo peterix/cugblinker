@@ -8,6 +8,7 @@
 #include "AccountInfo.h"
 #include "AccountDlg.h"
 #include "global.h"
+#include "TrafficPage.h"
 
 
 // CLinkerPage 对话框
@@ -288,6 +289,17 @@ void CLinkerPage::SetItemText(void)
 		}
 		else
 			m_chkAutoCon.EnableWindow(FALSE);
+
+		// 初始化流量界面
+		CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
+		CTrafficPage* pTrafficPage=(CTrafficPage*)&(pMainWnd->m_trafficPage);
+		pTrafficPage->UpdateData(FALSE);
+		if (theApp.curAccount.m_showTip)
+		{
+			pTrafficPage->m_chkAutoDis.EnableWindow(TRUE);
+		}
+		else
+			pTrafficPage->m_chkAutoDis.EnableWindow(FALSE);
 	}
 	else
 	{
