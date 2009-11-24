@@ -20,7 +20,7 @@ CLinkerPage::CLinkerPage()
 , m_bAutoStart(FALSE)
 , m_osVersion(0)
 , m_bAutoCon(FALSE)
-, m_curAccountNum(0)
+, m_curAccountIndex(0)
 {
 
 }
@@ -201,14 +201,6 @@ BOOL CLinkerPage::OnInitDialog()
 	//theApp.configXml.SetAccount(newUser);
 	//theApp.accounts.Add(newUser);
 
-	//newUser.m_username=L"080519s";
-	//newUser.m_password=L"22222";
-	//newUser.m_autoDis=false;
-	//newUser.m_range=1;
-	//newUser.m_savePwd=false;
-	//newUser.m_showTip=false;
-	//theApp.accounts.Add(newUser);
-
 	//for(int i=0;i<theApp.accounts.GetCount();i++)
 	//{
 	//	m_cboID.AddString(theApp.accounts[i].m_username);
@@ -241,9 +233,9 @@ void CLinkerPage::OnCbnEditchangeComboId()
 void CLinkerPage::OnCbnSelchangeComboId()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	m_curAccountNum=m_cboID.GetCurSel();
-	if (m_curAccountNum>=0)
-		m_cboID.GetLBText(m_curAccountNum,theApp.curAccount.m_username);
+	m_curAccountIndex=m_cboID.GetCurSel();
+	if (m_curAccountIndex>=0)
+		m_cboID.GetLBText(m_curAccountIndex,theApp.curAccount.m_username);
 	SetItemText();
 	SetBtnStat();
 }
@@ -268,7 +260,7 @@ void CLinkerPage::SetItemText(void)
 {
 	// 更新界面其他控件状态
 	int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
-	m_curAccountNum=index;
+	m_curAccountIndex=index;
 	if (index>=0)
 	{
 		theApp.curAccount=theApp.accounts[index];
@@ -535,12 +527,12 @@ void CLinkerPage::InitStat(void)
 		theApp.accounts.Add(theApp.configXml.GetAccount(i));
 	}
 	UpdateComboBox();
-	m_curAccountNum=theApp.configXml.GetActiveAccount();
-	m_cboID.SetCurSel(m_curAccountNum);
+	m_curAccountIndex=theApp.configXml.GetActiveAccount();
+	m_cboID.SetCurSel(m_curAccountIndex);
 	OnCbnSelchangeComboId();
-	//if (m_curAccountNum>=0 && m_curAccountNum<theApp.accounts.GetCount())
+	//if (m_curAccountIndex>=0 && m_curAccountIndex<theApp.accounts.GetCount())
 	//{
-	//	theApp.curAccount=theApp.accounts[m_curAccountNum];
+	//	theApp.curAccount=theApp.accounts[m_curAccountIndex];
 	//	SetItemText();
 	//}
 
@@ -585,7 +577,7 @@ void CLinkerPage::OnDestroy()
 	{
 		theApp.configXml.SetAccount(theApp.accounts[i]);
 	}
-	theApp.configXml.SetActiveAccount(m_curAccountNum);
+	theApp.configXml.SetActiveAccount(m_curAccountIndex);
 
 	// 自动连接状态
 	theApp.configXml.SetAutoConnect(m_bAutoCon);
@@ -601,9 +593,9 @@ void CLinkerPage::OnBnClickedSaveAccount()
 	// TODO: 在此添加控件通知处理程序代码
 	// 保存当前用户设置
 	UpdateData(TRUE);
-	if (m_curAccountNum>=0 && m_curAccountNum<theApp.accounts.GetCount())
+	if (m_curAccountIndex>=0 && m_curAccountIndex<theApp.accounts.GetCount())
 	{
-		theApp.accounts[m_curAccountNum]=theApp.curAccount;
+		theApp.accounts[m_curAccountIndex]=theApp.curAccount;
 	}
 	if (m_chkSavePwd.GetCheck())
 	{
@@ -611,9 +603,4 @@ void CLinkerPage::OnBnClickedSaveAccount()
 	}
 	else
 		m_chkAutoCon.EnableWindow(FALSE);
-}
-void CLinkerPage::OnStnClickedStaticId(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	// TODO: 在此添加控件通知处理程序代码
-	*pResult = 0;
 }

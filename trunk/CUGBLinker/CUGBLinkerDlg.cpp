@@ -44,7 +44,7 @@ BEGIN_MESSAGE_MAP(CCUGBLinkerDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_SHOWTASK,OnShowTask)
-	ON_MESSAGE(WM_UPDATENOTIFY, &CCUGBLinkerDlg::UpdateNotify)
+	ON_MESSAGE(WM_UPDATENOTIFY, &CCUGBLinkerDlg::OnUpdateNotify)
 	ON_WM_SYSCOMMAND()
 	ON_WM_CLOSE()
 END_MESSAGE_MAP()
@@ -191,7 +191,7 @@ LRESULT CCUGBLinkerDlg::OnShowTask(WPARAM wParam,LPARAM lParam)
 			//menu.TrackPopupMenu(TPM_LEFTALIGN,lpoint->x,lpoint->y,this); 
 			this->SetForegroundWindow();
 			int ret=menu.TrackPopupMenu(TPM_RETURNCMD|TPM_LEFTALIGN|TPM_HORIZONTAL,lpoint->x,lpoint->y,this,NULL);
-			int dis=0;// 用于标识断开还是断开全部
+			int *dis=new int(0);// 用于标识断开还是断开全部
 
 			switch(ret)
 			{
@@ -213,12 +213,12 @@ LRESULT CCUGBLinkerDlg::OnShowTask(WPARAM wParam,LPARAM lParam)
 				AfxBeginThread(Connect, NULL);
 				break;
 			case WM_DISCONNECT:
-				dis=0;
-				AfxBeginThread(DisConnect, &dis);
+				*dis=0;
+				AfxBeginThread(DisConnect, dis);
 				break;
 			case WM_DISCONNECTALL:
-				dis=1;
-				AfxBeginThread(DisConnect, &dis);
+				*dis=1;
+				AfxBeginThread(DisConnect, dis);
 				break;
 			}
 
@@ -252,7 +252,7 @@ void CCUGBLinkerDlg::OnClose()
 	CDialog::OnClose();
 }
 
-LRESULT CCUGBLinkerDlg::UpdateNotify(WPARAM wParam, LPARAM lParam)
+LRESULT CCUGBLinkerDlg::OnUpdateNotify(WPARAM wParam, LPARAM lParam)
 {
 	CString* strInfo=(CString*)wParam;
 	int* flag=(int*)lParam;//0不成功，1连接成功，2断开成功
@@ -262,7 +262,20 @@ LRESULT CCUGBLinkerDlg::UpdateNotify(WPARAM wParam, LPARAM lParam)
 	nid.uFlags = NIF_INFO;
 	_tcscpy_s(nid.szInfo, *strInfo);
 	nid.dwInfoFlags = *flag;
-	_tcscpy_s(nid.szInfoTitle,L"提示");
+	switch(*flag)
+	{
+	case BALLOON_ERROR:
+		_tcscpy_s(nid.szInfoTitle,L"错误");
+		break;
+	case BALLOON_WARNING:
+		_tcscpy_s(nid.szInfoTitle,L"警告");
+		break;
+	case BALLOON_INFO:
+		_tcscpy_s(nid.szInfoTitle,L"提示");
+		break;
+	default:
+		_tcscpy_s(nid.szInfoTitle,L"提示");
+	}
 
 	Shell_NotifyIcon(NIM_MODIFY, &nid);
 

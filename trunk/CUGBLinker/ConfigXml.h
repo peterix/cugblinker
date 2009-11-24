@@ -28,4 +28,13 @@ public:
 	int GetAccountCount(void);
 	void SetCurNIC(CString nic);
 	CString GetCurNIC(void);
+
+	void SetCurTraffic(int i,double curTraffic);
+	double GetCurTraffic(int i);
+	void SetMaxTraffic(int i,double maxTraffic);
+	double GetMaxTraffic(int i);
+	void SetShowTip(int i,int showTip);
+	int GetShowTip(int i);
+	void SetAutoDis(int i,int autoDis);
+	int GetAutoDis(int i);
 };

@@ -4,13 +4,6 @@
 #include "global.h"
 #include <pcap.h>
 
-CString AllTraffic;
-CString Total;
-
-UINT hhg=0;
-
-float* TrafficStats=NULL;
-DWORD	TrafficEntries;
 
 CTrafficButton::CTrafficButton(void)
 {
@@ -108,7 +101,7 @@ void CTrafficButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 
 		oldFont = memDC->SelectObject(&smallFont);
 
-		double scale = TGSize.cy / (hhg/1024.0);
+		double scale = TGSize.cy / (maxSpeed/1024.0);
 
 		yp = TrafficDrawRectangle.bottom;
 		xp = TrafficDrawRectangle.left;
@@ -177,8 +170,9 @@ void CTrafficButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 
 		//输出统计信息
 		memDC->SetTextColor(cyan);
-		memDC->TextOut(5,5,AllTraffic); 
-		memDC->TextOut(5,18,Total);
+		CString traffic;
+		traffic.Format(L"CUR: %.2f  HHG: %.2f",curSpeed/1024.0,maxSpeed/1024.0);
+		memDC->TextOut(5,5,traffic); 
 
 		memDC->SetTextColor(textcolor);
 		memDC->SetBkMode(bkmode);

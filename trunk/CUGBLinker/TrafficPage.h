@@ -27,12 +27,19 @@ public:
 	CTrafficButton m_btnSpeed;
 	CProgressCtrl m_proTotal;
 	CStatic m_lblTotal;
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	virtual BOOL OnInitDialog();
 	CTipStatic m_lblCurDev;
-	afx_msg void OnStnClickedStaticNic();
 	// 当前统计流量的网卡
 	CString m_curNIC;
+	CEdit m_txtMaxTraffic;
+	CButton m_chkShowTip;
+	CButton m_chkAutoDis;
+
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	virtual BOOL OnInitDialog();
+
+	afx_msg void OnStnClickedStaticNic();
 	afx_msg void OnDestroy();
 	CString GetNICDescription(CString nic);
+	afx_msg void OnBnClickedCheckDistip();
+	afx_msg void OnBnClickedCheckAutodis();
 };

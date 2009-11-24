@@ -39,6 +39,6 @@ public:
 	
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg LRESULT OnShowTask(WPARAM wParam,LPARAM lParam);
-	afx_msg LRESULT UpdateNotify(WPARAM wParam = 0,LPARAM lParam = 0);
+	afx_msg LRESULT OnUpdateNotify(WPARAM wParam = 0,LPARAM lParam = 0);
 	afx_msg void OnClose();
 };
