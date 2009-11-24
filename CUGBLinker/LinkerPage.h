@@ -51,8 +51,9 @@ private:
 	BOOL m_bAutoStart;
 	// 当前所使用系统的版本
 	int m_osVersion;
+public:
 	// 保存当前帐号的序号
-	int m_curAccountNum;
+	int m_curAccountIndex;
 public:
 	void SetBtnStat(void);
 	void InitStat(void);
@@ -74,5 +75,4 @@ public:
 	afx_msg void OnDestroy();
 
 	afx_msg void OnBnClickedSaveAccount();
-	afx_msg void OnStnClickedStaticId(NMHDR *pNMHDR, LRESULT *pResult);
 };

@@ -3,9 +3,15 @@
 #include "CUGBLinker.h"
 #include "CUGBLinkerDlg.h"
 #include "LinkerPage.h"
+#include "TrafficPage.h"
 
 BOOLEAN connecting=FALSE;
 BOOLEAN disconnecting=FALSE;
+
+double curSpeed=0.0;
+double maxSpeed=0.0;
+float* TrafficStats=NULL;
+DWORD	TrafficEntries;
 
 UINT Connect(LPVOID pvParam)
 {
@@ -110,6 +116,7 @@ UINT Connect(LPVOID pvParam)
 UINT DisConnect(LPVOID pvParam)
 {
 	int dis=*(int*)pvParam;
+	delete pvParam;
 	//if (dis==1 && (theApp.curAccount.m_username=="" || theApp.curAccount.m_password==""))
 	//	return 0;
 
@@ -254,7 +261,7 @@ pcap_if_t* finddevs()
 	if(pcap_findalldevs(&alldevs, errbuf) == -1)
 	{
 		CString* str=new CString();
-		str->Format(L"Error in pcap_findalldevs: %s",errbuf);
+		str->Format(L"Error in pcap_findalldevs: %S",errbuf);
 		int* flag=new int(BALLOON_ERROR);
 		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)str,(LPARAM)flag);
 	}
@@ -292,12 +299,12 @@ char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen)
 
 void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u_char *pkt_data)
 {
+	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
+	CTrafficPage* pTrafficPage=(CTrafficPage*)&(pMainWnd->m_trafficPage);
+
 	struct timeval *old_ts = (struct timeval *)state;
 	u_int delay;
 	LARGE_INTEGER Bps,Pps;
-	struct tm ltime;
-	char timestr[16];
-	time_t local_tv_sec;
 
 	/* Calculate the delay in microseconds from the last sample. */
 	/* This value is obtained from the timestamp that the associated with the sample. */
@@ -313,19 +320,103 @@ void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u
 	/* Get the number of Packets per second */
 	Pps.QuadPart=(((*(LONGLONG*)(pkt_data)) * 1000000) / (delay));
 
-	/* Convert the timestamp to readable format */
-	local_tv_sec = header->ts.tv_sec;
-	localtime_s(&ltime, &local_tv_sec);
-	strftime( timestr, sizeof timestr, "%H:%M:%S", &ltime);
+	// 计算当前速度及当前流量
+	theApp.curAccount.m_curTraffic+=Bps.QuadPart-Pps.QuadPart*68.43;
+	if (theApp.curAccount.m_curTraffic/1024/1024>theApp.curAccount.m_maxTraffic)
+	{
+		if (pTrafficPage->m_chkShowTip.GetCheck())
+		{
+			CString *infoStr=new CString();
+			int* flag=new int;
+			*infoStr=L"流量超标了！";
+			*flag=BALLOON_WARNING;
+			if (pTrafficPage->m_chkAutoDis.GetCheck())
+			{
+				int *dis=new int;
+				*dis=0;
+				AfxBeginThread(DisConnect, dis);
+				*infoStr+=L"\r\n已自动断开！";
+			}
+			pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)infoStr,(LPARAM)flag);
+		}
+	}
+	curSpeed=Bps.QuadPart-Pps.QuadPart*68.43;
+	maxSpeed=curSpeed>maxSpeed?curSpeed:maxSpeed;
 
-	/* Print timestamp*/
-	printf("%s ", timestr);
-
-	/* Print the samples */
-	printf("BPS=%I64u ", Bps.QuadPart);
-	printf("PPS=%I64u\n", Pps.QuadPart);
+	for(DWORD x=0; x<TrafficEntries; x++)
+		TrafficStats[x]	= TrafficStats[x+1];
+	TrafficStats[TrafficEntries]=curSpeed/1024.0;
 
 	//store current timestamp
 	old_ts->tv_sec=header->ts.tv_sec;
 	old_ts->tv_usec=header->ts.tv_usec;
+}
+
+UINT statistic_traffic(LPVOID pvParam)
+{
+	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
+	CTrafficPage* pTrafficPage=(CTrafficPage*)&(pMainWnd->m_trafficPage);
+
+	CString* errorInfo=new CString();
+	int* flag=new int;
+
+	pcap_t *fp;
+	char errbuf[PCAP_ERRBUF_SIZE];
+	struct timeval st_ts;
+	u_int netmask;
+	struct bpf_program fcode;
+
+	/* Open the output adapter */
+	CStringA temp=CStringA(pTrafficPage->m_curNIC);
+	if ( (fp= pcap_open(temp.GetBuffer(), 100, PCAP_OPENFLAG_NOCAPTURE_LOCAL, 1000, NULL, errbuf) ) == NULL)
+	{
+		errorInfo->Format(L"Unable to open adapter. %S",errbuf);
+		*flag=BALLOON_ERROR;
+		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+		temp.ReleaseBuffer();
+		return 1;
+	}
+	temp.ReleaseBuffer();
+
+	/* Don't care about netmask, it won't be used for this filter */
+	netmask=0xffffff; 
+
+	//compile the filter
+	if (pcap_compile(fp, &fcode, FILTER, 1, netmask) <0 )
+	{
+		errorInfo->Format(L"Unable to compile the packet filter. Check the syntax.");
+		*flag=BALLOON_ERROR;
+		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+		/* Free the device list */
+		pcap_close(fp);
+		return 1;
+	}
+
+	//set the filter
+	if (pcap_setfilter(fp, &fcode)<0)
+	{
+		errorInfo->Format(L"Error setting the filter.");
+		*flag=BALLOON_ERROR;
+		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+		/* Free the device list */
+		pcap_close(fp);
+		return 1;
+	}
+
+	/* Put the interface in statstics mode */
+	if (pcap_setmode(fp, MODE_STAT)<0)
+	{
+		errorInfo->Format(L"Error setting the mode.");
+		*flag=BALLOON_ERROR;
+		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+		/* Free the device list */
+		pcap_close(fp);
+		return 1;
+	}
+
+	/* Start the main loop */
+	pcap_loop(fp, 0, dispatcher_handler, (PUCHAR)&st_ts);
+
+	pcap_close(fp);
+	return 0;
 }

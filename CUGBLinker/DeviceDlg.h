@@ -24,4 +24,7 @@ public:
 	CEdit m_txtDevInfo;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnLbnSelchangeListDevice();
+	CString m_curNIC;
+	void SetCurNIC(CString curNIC);
+	CString GetCurNIC(void);
 };

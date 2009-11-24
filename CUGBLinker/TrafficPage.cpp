@@ -29,6 +29,12 @@ void CTrafficPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PROGRESS_TOTAL, m_proTotal);
 	DDX_Control(pDX, IDC_STATIC_TOTAL, m_lblTotal);
 	DDX_Control(pDX, IDC_STATIC_NIC, m_lblCurDev);
+	DDX_Control(pDX, IDC_EDIT_DISSIZE, m_txtMaxTraffic);
+	DDX_Control(pDX, IDC_CHECK_DISTIP, m_chkShowTip);
+	DDX_Control(pDX, IDC_CHECK_AUTODIS, m_chkAutoDis);
+	DDX_Text(pDX, IDC_EDIT_DISSIZE, theApp.curAccount.m_maxTraffic);
+	DDX_Check(pDX, IDC_CHECK_DISTIP, theApp.curAccount.m_showTip);
+	DDX_Check(pDX, IDC_CHECK_AUTODIS, theApp.curAccount.m_autoDis);
 }
 
 
@@ -36,6 +42,8 @@ BEGIN_MESSAGE_MAP(CTrafficPage, CPropertyPage)
 	ON_WM_CTLCOLOR()
 	ON_STN_CLICKED(IDC_STATIC_NIC, &CTrafficPage::OnStnClickedStaticNic)
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_CHECK_DISTIP, &CTrafficPage::OnBnClickedCheckDistip)
+	ON_BN_CLICKED(IDC_CHECK_AUTODIS, &CTrafficPage::OnBnClickedCheckAutodis)
 END_MESSAGE_MAP()
 
 
@@ -60,7 +68,7 @@ BOOL CTrafficPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	// TODO:  在此添加额外的初始化	textFont.CreateFont(20,0,0,0,FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET,OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, _T("Arial"));
+	// TODO:  在此添加额外的初始化
 	m_curNIC=theApp.configXml.GetCurNIC();
 
 	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
@@ -68,11 +76,15 @@ BOOL CTrafficPage::OnInitDialog()
 	m_lblCurDev.SetWindowText(NICDescription.Left(20)+L"...");
 	m_lblCurDev.SetText(NICDescription);
 	
+	// 设置界面初始化状态
 
-
+	// 设置进度条
 	m_lblTotal.SetFont(&textFont);
 	m_lblTotal.SetWindowText(L"2005/2408(10%)");
 	m_proTotal.SetPos(50);
+
+	// 调用流量统计函数开始统计流量
+	AfxBeginThread(statistic_traffic, NULL);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
@@ -82,10 +94,12 @@ void CTrafficPage::OnStnClickedStaticNic()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CDeviceDlg deviceDlg;
+	deviceDlg.SetCurNIC(m_curNIC);
 	if (IDOK==deviceDlg.DoModal())
 	{
-		//m_curNIC=deviceDlg.m_txtDevInfo;
-	}	
+		m_curNIC=deviceDlg.GetCurNIC();
+	}
+	m_lblCurDev.SetWindowText(GetNICDescription(m_curNIC).Left(20)+L"...");
 	m_lblCurDev.SetText(GetNICDescription(m_curNIC));
 }
 
@@ -110,5 +124,28 @@ CString CTrafficPage::GetNICDescription(CString nic)
 			break;
 		}
 	}
+	pcap_freealldevs(alldevs);
 	return L"";
+}
+
+void CTrafficPage::OnBnClickedCheckDistip()
+{
+	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
+	CLinkerPage* pLinkerPage=(CLinkerPage*)&(pMainWnd->m_linkerPage);
+
+	if (pLinkerPage->m_curAccountIndex>=0 && pLinkerPage->m_curAccountIndex<theApp.accounts.GetCount())
+	{
+		theApp.accounts[pLinkerPage->m_curAccountIndex]=theApp.curAccount;
+	}
+	if (m_chkShowTip.GetCheck())
+	{
+		m_chkAutoDis.EnableWindow(TRUE);
+	}
+	else
+		m_chkAutoDis.EnableWindow(FALSE);
+}
+
+void CTrafficPage::OnBnClickedCheckAutodis()
+{
+	// TODO: 在此添加控件通知处理程序代码
 }

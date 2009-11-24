@@ -19,14 +19,12 @@
 #define GRIDSCROLLXSPEED -1		// How fast grid scrolls in x direction
 #define GRIDSCROLLYSPEED 0		// How fast grid scrolls in y direction
 
-// Íø¿¨ÐÅÏ¢
-typedef struct nicdev_t 
-{
-	struct nicdev_t* next;
-	CString id;
-	CString description;
-	CString info;
-}nicdev;
+#define FILTER "net 192.168"
+
+extern double curSpeed;
+extern double maxSpeed;
+extern float* TrafficStats;
+extern DWORD TrafficEntries;
 
 UINT Connect(LPVOID pvParam);
 UINT DisConnect(LPVOID pvParam);
@@ -36,3 +34,4 @@ pcap_if_t* finddevs();
 char* iptos(u_long in);
 char* ip6tos(struct sockaddr *sockaddr, char *address, int addrlen);
 void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u_char *pkt_data);
+UINT statistic_traffic(LPVOID pvParam);
