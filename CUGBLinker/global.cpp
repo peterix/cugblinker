@@ -373,7 +373,7 @@ UINT statistic_traffic(LPVOID pvParam)
 		CStringA temp=CStringA(pTrafficPage->m_curNIC);
 		if ( (fp= pcap_open(temp.GetBuffer(), 100, PCAP_OPENFLAG_NOCAPTURE_LOCAL, 1000, NULL, errbuf) ) == NULL)
 		{
-			errorInfo->Format(L"Unable to open adapter. %S",errbuf);
+			errorInfo->Format(L"Íø¿¨´ò¿ªÊ§°Ü,Çë¼ì²éÊÇ·ñÒÑÑ¡ÔñÍø¿¨. \n%S",errbuf);
 			*flag=BALLOON_ERROR;
 			pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
 			temp.ReleaseBuffer();
