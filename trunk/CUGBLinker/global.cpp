@@ -12,6 +12,7 @@ double curSpeed=0.0;
 double maxSpeed=0.0;
 float* TrafficStats=NULL;
 DWORD	TrafficEntries;
+pcap_t *fp=NULL;
 
 UINT Connect(LPVOID pvParam)
 {
@@ -49,10 +50,10 @@ UINT Connect(LPVOID pvParam)
 		theApp.curAccount.m_username,theApp.curAccount.m_password,range);
 	CStringA sendStr;
 	sendStr.Format( "POST /ipgw/ipgw.ipgw HTTP/1.1\r\n"
-					"Host: 202.204.105.27\r\n"
-					"Content-Length: %d\r\n"
-					"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
-					userStr.GetLength());
+		"Host: 202.204.105.27\r\n"
+		"Content-Length: %d\r\n"
+		"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
+		userStr.GetLength());
 	sendStr+=userStr;
 
 	if (m_pSocket->Send(sendStr,sendStr.GetLength(),0) == SOCKET_ERROR) 
@@ -80,7 +81,7 @@ UINT Connect(LPVOID pvParam)
 	wszStr.ReleaseBuffer();
 
 	//对返回信息处理
-	
+
 	CString ans1=L"<IMG SRC=\"/images/sign.gif\" hspace=\"6\" vspace=\"0\" align=\"middle\">";
 	CString ans2=L"网络连接成功";
 
@@ -104,7 +105,7 @@ UINT Connect(LPVOID pvParam)
 	{
 		wszStr=L"连接出错\r\n请登录IP网关连接";
 	}
-	
+
 	CString* str=new CString(wszStr);
 	pLinkerPage->PostMessage(WM_UPDATEINFO,(WPARAM)str,(LPARAM)conSuccess);
 
@@ -154,10 +155,10 @@ UINT DisConnect(LPVOID pvParam)
 	userStr+=disStr;
 	CStringA sendStr;
 	sendStr.Format( "POST /ipgw/ipgw.ipgw HTTP/1.1\r\n"
-					"Host: 202.204.105.27\r\n"
-					"Content-Length: %d\r\n"
-					"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
-					userStr.GetLength());
+		"Host: 202.204.105.27\r\n"
+		"Content-Length: %d\r\n"
+		"Content-Type: application/x-www-form-urlencoded\r\n\r\n",
+		userStr.GetLength());
 	sendStr+=userStr;
 
 	if (m_pSocket->Send(sendStr,sendStr.GetLength(),0) == SOCKET_ERROR) 
@@ -312,9 +313,9 @@ void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u
 	/* Get the number of Bits per second */
 	Bps.QuadPart=(((*(LONGLONG*)(pkt_data + 8)) * 1000000) / (delay));
 	/*                                                   ^
-														 |
-														 |
-					delay is expressed in microseconds --
+	|
+	|
+	delay is expressed in microseconds --
 	*/
 
 	/* Get the number of Packets per second */
@@ -360,63 +361,67 @@ UINT statistic_traffic(LPVOID pvParam)
 	CString* errorInfo=new CString();
 	int* flag=new int;
 
-	pcap_t *fp;
 	char errbuf[PCAP_ERRBUF_SIZE];
 	struct timeval st_ts;
 	u_int netmask;
 	struct bpf_program fcode;
 
-	/* Open the output adapter */
-	CStringA temp=CStringA(pTrafficPage->m_curNIC);
-	if ( (fp= pcap_open(temp.GetBuffer(), 100, PCAP_OPENFLAG_NOCAPTURE_LOCAL, 1000, NULL, errbuf) ) == NULL)
+	while(1) // 切换统计网卡后，对新网卡继续统计流量 
 	{
-		errorInfo->Format(L"Unable to open adapter. %S",errbuf);
-		*flag=BALLOON_ERROR;
-		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+
+		/* Open the output adapter */
+		CStringA temp=CStringA(pTrafficPage->m_curNIC);
+		if ( (fp= pcap_open(temp.GetBuffer(), 100, PCAP_OPENFLAG_NOCAPTURE_LOCAL, 1000, NULL, errbuf) ) == NULL)
+		{
+			errorInfo->Format(L"Unable to open adapter. %S",errbuf);
+			*flag=BALLOON_ERROR;
+			pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+			temp.ReleaseBuffer();
+			return 1;
+		}
 		temp.ReleaseBuffer();
-		return 1;
-	}
-	temp.ReleaseBuffer();
 
-	/* Don't care about netmask, it won't be used for this filter */
-	netmask=0xffffff; 
+		/* Don't care about netmask, it won't be used for this filter */
+		netmask=0xffffff; 
 
-	//compile the filter
-	if (pcap_compile(fp, &fcode, FILTER, 1, netmask) <0 )
-	{
-		errorInfo->Format(L"Unable to compile the packet filter. Check the syntax.");
-		*flag=BALLOON_ERROR;
-		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
-		/* Free the device list */
+		//compile the filter
+		if (pcap_compile(fp, &fcode, FILTER, 1, netmask) <0 )
+		{
+			errorInfo->Format(L"Unable to compile the packet filter. Check the syntax.");
+			*flag=BALLOON_ERROR;
+			pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+			/* Free the device list */
+			pcap_close(fp);
+			return 1;
+		}
+
+		//set the filter
+		if (pcap_setfilter(fp, &fcode)<0)
+		{
+			errorInfo->Format(L"Error setting the filter.");
+			*flag=BALLOON_ERROR;
+			pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+			/* Free the device list */
+			pcap_close(fp);
+			return 1;
+		}
+
+		/* Put the interface in statstics mode */
+		if (pcap_setmode(fp, MODE_STAT)<0)
+		{
+			errorInfo->Format(L"Error setting the mode.");
+			*flag=BALLOON_ERROR;
+			pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
+			/* Free the device list */
+			pcap_close(fp);
+			return 1;
+		}
+
+		/* Start the main loop */
+		pcap_loop(fp, 0, dispatcher_handler, (PUCHAR)&st_ts);
+
 		pcap_close(fp);
-		return 1;
+		fp=NULL;
 	}
-
-	//set the filter
-	if (pcap_setfilter(fp, &fcode)<0)
-	{
-		errorInfo->Format(L"Error setting the filter.");
-		*flag=BALLOON_ERROR;
-		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
-		/* Free the device list */
-		pcap_close(fp);
-		return 1;
-	}
-
-	/* Put the interface in statstics mode */
-	if (pcap_setmode(fp, MODE_STAT)<0)
-	{
-		errorInfo->Format(L"Error setting the mode.");
-		*flag=BALLOON_ERROR;
-		pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
-		/* Free the device list */
-		pcap_close(fp);
-		return 1;
-	}
-
-	/* Start the main loop */
-	pcap_loop(fp, 0, dispatcher_handler, (PUCHAR)&st_ts);
-
-	pcap_close(fp);
 	return 0;
 }

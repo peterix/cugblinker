@@ -12,7 +12,7 @@ public:
 	INT		m_range;		//默认访问范围
 	BOOL	m_savePwd;		//是否保存密码
 	DOUBLE	m_curTraffic;	//当前流量
-	DOUBLE	m_maxTraffic;	//流量控制阈值
+	INT		m_maxTraffic;	//流量控制阈值
 	BOOL	m_showTip;		//超流量时是否提示
 	BOOL	m_autoDis;		//超流量时是否自动断网
 

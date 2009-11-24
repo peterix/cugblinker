@@ -5,7 +5,6 @@
 #include "afxsock.h"
 #include "accountinfo.h"
 
-
 // CLinkerPage ¶Ô»°¿ò
 
 class CLinkerPage  : public CPropertyPage

@@ -25,6 +25,7 @@ extern double curSpeed;
 extern double maxSpeed;
 extern float* TrafficStats;
 extern DWORD TrafficEntries;
+extern pcap_t *fp;
 
 UINT Connect(LPVOID pvParam);
 UINT DisConnect(LPVOID pvParam);
