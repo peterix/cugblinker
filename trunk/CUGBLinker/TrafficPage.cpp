@@ -15,6 +15,7 @@ CTrafficPage::CTrafficPage()
 	: CPropertyPage(CTrafficPage::IDD)
 	, m_curNIC(_T(""))
 	, pLinkerPage(NULL)
+	, pStatisticThread(NULL)
 {
 
 }
@@ -28,7 +29,6 @@ void CTrafficPage::DoDataExchange(CDataExchange* pDX)
 	CPropertyPage::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_BUTTON_SPEED, m_btnSpeed);
 	DDX_Control(pDX, IDC_PROGRESS_TOTAL, m_proTotal);
-	DDX_Control(pDX, IDC_STATIC_TOTAL, m_lblTotal);
 	DDX_Control(pDX, IDC_STATIC_NIC, m_lblCurDev);
 	DDX_Control(pDX, IDC_EDIT_DISSIZE, m_txtMaxTraffic);
 	DDX_Control(pDX, IDC_CHECK_DISTIP, m_chkShowTip);
@@ -95,13 +95,11 @@ BOOL CTrafficPage::OnInitDialog()
 		m_chkAutoDis.EnableWindow(FALSE);
 
 	// 设置进度条
-	m_lblTotal.SetFont(&textFont);
-	//m_lblTotal.SetWindowText(L"2005/2408(10%)");
-	m_proTotal.SetRange(0,theApp.curAccount.m_maxTraffic);
+	m_proTotal.SetRange(theApp.curAccount.m_maxTraffic);
 	m_proTotal.SetPos(theApp.curAccount.m_curTraffic/1024/1024);
 
 	// 调用流量统计函数开始统计流量
-	AfxBeginThread(statistic_traffic, NULL);
+	pStatisticThread=AfxBeginThread(statistic_traffic, NULL);
 
 	SetTimer(11,1000,NULL);
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -121,6 +119,15 @@ void CTrafficPage::OnStnClickedStaticNic()
 		}
 	}
 	m_curNIC=deviceDlg.GetCurNIC();
+
+	// 判断统计线程是否还在运行，如果已经结束则再次启动
+	DWORD code; 
+	bool res = GetExitCodeThread(pStatisticThread->m_hThread, &code); 
+	if (!res || code!=STILL_ACTIVE)//线程还活着 
+	{
+		pStatisticThread=AfxBeginThread(statistic_traffic, NULL);		
+	}
+
 	CString NICDescription=GetNICDescription(m_curNIC);
 	if (NICDescription.GetLength()>20)
 	{
@@ -172,6 +179,8 @@ void CTrafficPage::OnBnClickedCheckDistip()
 void CTrafficPage::OnBnClickedCheckAutodis()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	tip_flag=true;//恢复超流量提示功能
+
 	UpdateData(TRUE);
 	if (pLinkerPage->m_curAccountIndex>=0 && pLinkerPage->m_curAccountIndex<theApp.accounts.GetCount())
 	{
@@ -188,7 +197,7 @@ void CTrafficPage::OnEnChangeEditDissize()
 
 	// TODO:  在此添加控件通知处理程序代码
 	OnBnClickedCheckAutodis();
-	m_proTotal.SetRange(0,theApp.curAccount.m_maxTraffic);
+	m_proTotal.SetRange(theApp.curAccount.m_maxTraffic);
 }
 
 void CTrafficPage::OnTimer(UINT_PTR nIDEvent)

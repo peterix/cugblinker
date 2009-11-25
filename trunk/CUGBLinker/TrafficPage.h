@@ -3,6 +3,7 @@
 #include "afxwin.h"
 #include "tipstatic.h"
 #include "LinkerPage.h"
+#include "TextProgressCtrl.h"
 
 // CTrafficPage 对话框
 
@@ -25,8 +26,7 @@ private:
 	CFont textFont;
 public:
 	CTrafficButton m_btnSpeed;
-	CProgressCtrl m_proTotal;
-	CStatic m_lblTotal;
+	CTextProgressCtrl m_proTotal;
 	CTipStatic m_lblCurDev;
 	// 当前统计流量的网卡
 	CString m_curNIC;
@@ -45,4 +45,5 @@ public:
 	afx_msg void OnBnClickedCheckAutodis();
 	afx_msg void OnEnChangeEditDissize();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	CWinThread* pStatisticThread;
 };

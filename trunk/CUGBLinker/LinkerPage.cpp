@@ -264,6 +264,8 @@ void CLinkerPage::SetItemText(void)
 	m_curAccountIndex=index;
 	if (index>=0)
 	{
+		tip_flag=true;//恢复超流量提示功能
+
 		theApp.curAccount=theApp.accounts[index];
 		if (theApp.curAccount.m_savePwd)
 		{

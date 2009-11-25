@@ -19,13 +19,14 @@
 #define GRIDSCROLLXSPEED -1		// How fast grid scrolls in x direction
 #define GRIDSCROLLYSPEED 0		// How fast grid scrolls in y direction
 
-#define FILTER "net 192.168"
+#define FILTER ""
 
 extern double curSpeed;
 extern double maxSpeed;
 extern float* TrafficStats;
 extern DWORD TrafficEntries;
 extern pcap_t *fp;
+extern bool tip_flag; //用于记录是否提示过的表示
 
 UINT Connect(LPVOID pvParam);
 UINT DisConnect(LPVOID pvParam);
