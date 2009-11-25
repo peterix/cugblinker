@@ -11,7 +11,11 @@ CConfigXml::~CConfigXml(void)
 
 void CConfigXml::Init(void)
 {
-	if(!doc.LoadFile("CUGBLinker.xml"))
+	TCHAR szPath[MAX_PATH];
+	GetModuleFileName( NULL, szPath, MAX_PATH );
+	CStringA path(szPath);
+	path.Replace("CUGBLinker.exe","CUGBLinker.xml");
+	if(!doc.LoadFile(path))
 	{
 		TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
 		doc.LinkEndChild(decl);
