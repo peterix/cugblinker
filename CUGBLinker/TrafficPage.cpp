@@ -16,6 +16,7 @@ CTrafficPage::CTrafficPage()
 	, m_curNIC(_T(""))
 	, pLinkerPage(NULL)
 	, pStatisticThread(NULL)
+	, oldTime(0)
 {
 
 }
@@ -74,6 +75,8 @@ BOOL CTrafficPage::OnInitDialog()
 	// TODO:  在此添加额外的初始化
 	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
 	pLinkerPage=(CLinkerPage*)&(pMainWnd->m_linkerPage);
+
+	oldTime=CTime::GetCurrentTime();
 
 	m_curNIC=theApp.configXml.GetCurNIC();
 
@@ -203,10 +206,14 @@ void CTrafficPage::OnEnChangeEditDissize()
 void CTrafficPage::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CTime curTime=CTime::GetCurrentTime();
+	if (curTime.GetYear()>oldTime.GetYear() ||
+		curTime.GetMonth()>oldTime.GetMonth() ||
+		curTime.GetDay()>oldTime.GetDay())
+	{
+		theApp.curAccount.m_curTraffic=0;
+	}
 	m_proTotal.SetPos(theApp.curAccount.m_curTraffic/1024/1024);
-	//CString temp;
-	//temp.Format(L"%f",theApp.curAccount.m_curTraffic);
-	//m_lblTotal.SetWindowText(temp);
 
 	if (pLinkerPage->m_curAccountIndex>=0 && pLinkerPage->m_curAccountIndex<theApp.accounts.GetCount())
 	{

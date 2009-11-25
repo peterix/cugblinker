@@ -19,7 +19,7 @@
 #define GRIDSCROLLXSPEED -1		// How fast grid scrolls in x direction
 #define GRIDSCROLLYSPEED 0		// How fast grid scrolls in y direction
 
-#define FILTER ""
+#define FILTER "(not net 202.204.96/20 and not net 219.225.32/19 and not net 121.194.80/20)"	// 统计流量用的过滤器
 
 extern double curSpeed;
 extern double maxSpeed;
