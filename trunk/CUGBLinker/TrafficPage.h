@@ -46,4 +46,5 @@ public:
 	afx_msg void OnEnChangeEditDissize();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	CWinThread* pStatisticThread;
+	CTime oldTime;
 };
