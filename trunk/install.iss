@@ -11,7 +11,7 @@
 ; 注: AppId的值为单独标识该应用程序。
 ; 不要为其他安装程序使用相同的AppId值。
 ; (生成新的GUID，点击 工具|在IDE中生成GUID。)
-AppId={{26F0F21B-FEBC-4635-9305-9A0E9E8D88D3}
+AppId={{BB217D6D-989D-48E8-8ABA-D7364032FD5A}
 AppName={#MyAppName}
 AppVerName={#MyAppVerName}
 AppPublisher={#MyAppPublisher}
@@ -40,14 +40,24 @@ Source: "E:\My Documents\Visual Studio 2008\Projects\CUGBLinker\Release\CUGBLink
 Source: "C:\WINDOWS\system32\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\WINDOWS\system32\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\WINDOWS\system32\npptools.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\WINDOWS\system32\drivers\npf.sys"; DestDir: "C:\WINDOWS\system32\drivers"; Flags: ignoreversion
+Source: "C:\WINDOWS\system32\pthreadVC.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\WINDOWS\system32\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist
 ; 注意: 不要在任何共享系统文件上使用“Flags: ignoreversion”
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
+Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; WorkingDir: "{app}"
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon; WorkingDir: "{app}"
+
+[Registry]
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: dword; ValueName:"Type"; ValueData: "1"
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: dword; ValueName:"Start"; ValueData: "2"
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: dword; ValueName:"ErrorControl"; ValueData: "1"
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: expandsz; ValueName:"ImagePath"; ValueData: "system32\drivers\npf.sys"
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: string; ValueName:"DisplayName"; ValueData: "NetGroup Packet Filter Driver"
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: dword; ValueName:"TimestampMode"; ValueData: "0"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent
