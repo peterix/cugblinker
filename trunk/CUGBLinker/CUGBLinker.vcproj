@@ -391,6 +391,10 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\install.iss"
+			>
+		</File>
+		<File
 			RelativePath=".\ReadMe.txt"
 			>
 		</File>
