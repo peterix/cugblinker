@@ -7,7 +7,7 @@ CAccountInfo::CAccountInfo(void)
 	, m_range(0)
 	, m_savePwd(FALSE)
 	, m_curTraffic(0)
-	, m_maxTraffic(2048)
+	, m_maxTraffic(2000)
 	, m_showTip(FALSE)
 	, m_autoDis(FALSE)
 {

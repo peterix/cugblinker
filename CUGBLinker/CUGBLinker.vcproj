@@ -258,6 +258,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\TextProgressCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\tinystr.cpp"
 				>
 			</File>
@@ -341,6 +345,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TextProgressCtrl.h"
 				>
 			</File>
 			<File

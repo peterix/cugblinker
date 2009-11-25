@@ -11,8 +11,9 @@ BOOLEAN disconnecting=FALSE;
 double curSpeed=0.0;
 double maxSpeed=0.0;
 float* TrafficStats=NULL;
-DWORD	TrafficEntries;
+DWORD TrafficEntries;
 pcap_t *fp=NULL;
+bool tip_flag=true; //用于记录是否提示过的表示
 
 UINT Connect(LPVOID pvParam)
 {
@@ -312,21 +313,21 @@ void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u
 	delay=(header->ts.tv_sec - old_ts->tv_sec) * 1000000 - old_ts->tv_usec + header->ts.tv_usec;
 	/* Get the number of Bits per second */
 	Bps.QuadPart=(((*(LONGLONG*)(pkt_data + 8)) * 1000000) / (delay));
-	/*                                                   ^
-	|
-	|
-	delay is expressed in microseconds --
-	*/
+	//                                               ^
+	//												 |
+	//												 |
+	//			delay is expressed in microseconds --
 
 	/* Get the number of Packets per second */
 	Pps.QuadPart=(((*(LONGLONG*)(pkt_data)) * 1000000) / (delay));
 
 	// 计算当前速度及当前流量
 	theApp.curAccount.m_curTraffic+=Bps.QuadPart-Pps.QuadPart*68.43;
-	if (theApp.curAccount.m_curTraffic/1024/1024>theApp.curAccount.m_maxTraffic)
+	if (tip_flag && (theApp.curAccount.m_curTraffic>theApp.curAccount.m_maxTraffic*1024.0*1024))
 	{
 		if (pTrafficPage->m_chkShowTip.GetCheck())
 		{
+			tip_flag=false;
 			CString *infoStr=new CString();
 			int* flag=new int;
 			*infoStr=L"流量超标了！";
@@ -336,7 +337,7 @@ void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u
 				int *dis=new int;
 				*dis=0;
 				AfxBeginThread(DisConnect, dis);
-				*infoStr+=L"\r\n已自动断开！";
+				*infoStr+=L"\n已自动断开！";
 			}
 			pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)infoStr,(LPARAM)flag);
 		}
@@ -373,7 +374,7 @@ UINT statistic_traffic(LPVOID pvParam)
 		CStringA temp=CStringA(pTrafficPage->m_curNIC);
 		if ( (fp= pcap_open(temp.GetBuffer(), 100, PCAP_OPENFLAG_NOCAPTURE_LOCAL, 1000, NULL, errbuf) ) == NULL)
 		{
-			errorInfo->Format(L"网卡打开失败,请检查是否已选择网卡. \n%S",errbuf);
+			errorInfo->Format(L"网卡打开失败,请检查是否已选择网卡. \n%S\n%S",temp.GetBuffer(), errbuf);
 			*flag=BALLOON_ERROR;
 			pMainWnd->PostMessage(WM_UPDATENOTIFY,(WPARAM)errorInfo,(LPARAM)flag);
 			temp.ReleaseBuffer();
