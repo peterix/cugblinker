@@ -11,12 +11,22 @@ CConfigXml::~CConfigXml(void)
 
 void CConfigXml::Init(void)
 {
+	HRESULT hr;
 	TCHAR szPath[MAX_PATH];
-	GetModuleFileName( NULL, szPath, MAX_PATH );
+		if (SUCCEEDED (hr = SHGetFolderPathAndSubDir(NULL,                // hWnd	
+			CSIDL_APPDATA|CSIDL_FLAG_CREATE,       // csidl
+			NULL,                // hToken
+			SHGFP_TYPE_CURRENT,  // dwFlags
+			TEXT("CUGBLinker"),    // pszSubDir
+			szPath)))            // pszPath
+		{
+			PathAppend(szPath, TEXT("CUGBLinker.xml"));
+		}
+
 	CStringA path(szPath);
-	path.Replace("CUGBLinker.exe","CUGBLinker.xml");
 	if(!doc.LoadFile(path))
 	{
+		//AfxMessageBox(CString(path));
 		TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "UTF-8", "" );
 		doc.LinkEndChild(decl);
 		TiXmlElement* root = new TiXmlElement( "CUGBLinker" );
