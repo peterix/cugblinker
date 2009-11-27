@@ -392,10 +392,30 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\install.iss"
+		<Filter
+			Name="安装包文件"
 			>
-		</File>
+			<File
+				RelativePath="..\install.iss"
+				>
+			</File>
+			<File
+				RelativePath="..\Dlls\npptools.dll"
+				>
+			</File>
+			<File
+				RelativePath="..\Dlls\Packet.dll"
+				>
+			</File>
+			<File
+				RelativePath="..\Dlls\pthreadVC.dll"
+				>
+			</File>
+			<File
+				RelativePath="..\Dlls\wpcap.dll"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
 			>

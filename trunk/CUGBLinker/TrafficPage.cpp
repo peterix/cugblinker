@@ -164,7 +164,10 @@ CString CTrafficPage::GetNICDescription(CString nic)
 			break;
 		}
 	}
-	pcap_freealldevs(alldevs);
+	if (alldevs)
+	{
+		pcap_freealldevs(alldevs);
+	}
 	return L"点击此处选择网卡...";
 }
 
