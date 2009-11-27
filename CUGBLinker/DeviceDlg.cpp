@@ -56,7 +56,10 @@ BOOL CDeviceDlg::OnInitDialog()
 			curNicIndex=i;
 		}
 	}
-	pcap_freealldevs(alldevs);
+	if (alldevs)
+	{
+		pcap_freealldevs(alldevs);
+	}
 	m_lstDev.SetCurSel(curNicIndex);
 	OnLbnSelchangeListDevice();
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -69,7 +72,11 @@ void CDeviceDlg::OnLbnSelchangeListDevice()
 	pcap_if_t* alldevs=finddevs();
 	pcap_if_t* d=NULL;
 	CString nicDes,strInfo;
-	m_lstDev.GetText(m_lstDev.GetCurSel(),nicDes);
+	int index=m_lstDev.GetCurSel();
+	if (index>=0)
+	{
+		m_lstDev.GetText(index,nicDes);
+	}
 	for(d = alldevs; d != NULL; d = d->next)
 	{
 		if (nicDes==CString(d->description))
@@ -113,7 +120,10 @@ void CDeviceDlg::OnLbnSelchangeListDevice()
 			break;
 		}
 	}
-	pcap_freealldevs(alldevs);
+	if (alldevs)
+	{
+		pcap_freealldevs(alldevs);
+	}
 }
 
 void CDeviceDlg::SetCurNIC(CString curNIC)

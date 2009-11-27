@@ -21,9 +21,8 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputDir=C:\Documents and Settings\Administrator\桌面
+OutputDir=.
 OutputBaseFilename=CUGBLinker
-;SetupIconFile=E:\My Documents\Visual Studio 2008\Projects\CUGBLinker\CUGBLinker\res\CUGBLinker.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -35,12 +34,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "E:\My Documents\Visual Studio 2008\Projects\CUGBLinker\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\WINDOWS\system32\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\WINDOWS\system32\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\WINDOWS\system32\npptools.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\WINDOWS\system32\pthreadVC.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\WINDOWS\system32\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist
+Source: ".\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Dlls\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Dlls\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Dlls\npptools.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Dlls\pthreadVC.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Dlls\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist
+Source: ".\Dlls\drivers\npf.inf"; DestDir: "{win}\inf"; Flags: ignoreversion
 ; 注意: 不要在任何共享系统文件上使用“Flags: ignoreversion”
 
 [Icons]
@@ -49,6 +49,7 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"; 
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; WorkingDir: "{app}"
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon; WorkingDir: "{app}"
 
+; 添加注册表信息（非必须），已防止驱动没有安装成功时，可以通过重启方式启动驱动
 [Registry]
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: dword; ValueName:"Type"; ValueData: "1"
@@ -59,5 +60,6 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: string; 
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Services\NPF"; ValueType: dword; ValueName:"TimestampMode"; ValueData: "0"
 
 [Run]
+Filename: "{sys}\rundll32.exe"; Parameters: "SETUPAPI.DLL,InstallHinfSection DefaultInstall 128 {win}\inf\npf.inf"; Flags: runhidden skipifdoesntexist
+Filename: "{sys}\net.exe"; Parameters: "start npf"; Flags: runhidden skipifdoesntexist
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent
-
