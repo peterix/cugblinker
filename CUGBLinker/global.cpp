@@ -369,7 +369,7 @@ UINT statistic_traffic(LPVOID pvParam)
 
 	while(1) // 切换统计网卡后，对新网卡继续统计流量 
 	{
-
+		CStringA filter="";// 过滤器
 		/* Open the output adapter */
 		CStringA temp=CStringA(pTrafficPage->m_curNIC);
 		if ( (fp= pcap_open(temp.GetBuffer(), 100, PCAP_OPENFLAG_NOCAPTURE_LOCAL, 1000, NULL, errbuf) ) == NULL)
@@ -385,8 +385,79 @@ UINT statistic_traffic(LPVOID pvParam)
 		/* Don't care about netmask, it won't be used for this filter */
 		netmask=0xffffff; 
 
+		// 配置过滤器，需读取本机网关，并获得网关mac地址
+		char gatewayIP[16]={0};
+		char gatewayMAC[18]={0};
+		HKEY hKey;
+		LONG lRet;
+		DWORD BufferSize = 40;
+		UCHAR* PerfData = new UCHAR[BufferSize];
+		lRet = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
+			CString("SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces\\")
+			+pTrafficPage->m_curNIC.Mid(12), 0, KEY_QUERY_VALUE, &hKey );
+
+		if( lRet == ERROR_SUCCESS )
+		{
+			lRet=RegQueryValueEx( hKey,
+				TEXT("EnableDHCP"),
+				NULL,
+				NULL,
+				PerfData,
+				&BufferSize );
+			BufferSize=40;
+			if (PerfData[0]==1)
+			{
+				lRet=RegQueryValueEx( hKey,
+					TEXT("DhcpDefaultGateway"),
+					NULL,
+					NULL,
+					PerfData,
+					&BufferSize );
+			}
+			else
+			{
+				lRet=RegQueryValueEx( hKey,
+					TEXT("DefaultGateway"),
+					NULL,
+					NULL,
+					PerfData,
+					&BufferSize );
+			}
+		}
+		RegCloseKey( hKey );
+
+		for (int i=0;i<15;i++)
+		{
+			gatewayIP[i]=PerfData[i*2];
+		}
+		if (CStringA(gatewayIP)!="")
+		{
+			// 获取网关mac地址
+			ULONG MacAddr[2];       /* for 6-byte hardware addresses */
+			ULONG PhysAddrLen = 6;  /* default to length of six bytes */
+			memset(&MacAddr, 0xff, sizeof (MacAddr));
+			SendARP(inet_addr(gatewayIP), 0, &MacAddr, &PhysAddrLen);
+
+			BYTE *bPhysAddr = (BYTE *) & MacAddr;
+			for (int i = 0; i < (int)PhysAddrLen; i++) 
+			{
+				if (i<(int)PhysAddrLen-1)
+				{
+					sprintf(gatewayMAC+i*3,"%.2X:",(int)bPhysAddr[i]);
+				}
+				else
+				{
+					sprintf(gatewayMAC+i*3,"%.2X",(int)bPhysAddr[i]);
+				}
+			}
+			if (CStringA(gatewayMAC)!="")
+			{
+				filter+=CStringA("ether host ")+CStringA(gatewayMAC)+CStringA(" and not host ")+CStringA(gatewayIP)+CStringA(" and ");
+			}
+		}
+		filter+=CStringA(FILTER);
 		//compile the filter
-		if (pcap_compile(fp, &fcode, FILTER, 1, netmask) <0 )
+		if (pcap_compile(fp, &fcode, filter, 1, netmask) <0 )
 		{
 			errorInfo->Format(L"Unable to compile the packet filter. Check the syntax.");
 			*flag=BALLOON_ERROR;

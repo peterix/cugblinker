@@ -159,7 +159,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wpcap.lib ws2_32.lib"
+				AdditionalDependencies="wpcap.lib ws2_32.lib IpHlpApi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=".\Lib"
 				EnableUAC="false"
