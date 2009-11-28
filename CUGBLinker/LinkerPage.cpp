@@ -295,13 +295,14 @@ void CLinkerPage::SetItemText(void)
 		// 初始化流量界面
 		CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
 		CTrafficPage* pTrafficPage=(CTrafficPage*)&(pMainWnd->m_trafficPage);
-		pTrafficPage->UpdateData(FALSE);
-		if (theApp.curAccount.m_showTip)
-		{
-			pTrafficPage->m_chkAutoDis.EnableWindow(TRUE);
-		}
-		else
-			pTrafficPage->m_chkAutoDis.EnableWindow(FALSE);
+		pTrafficPage->SetItemStat();
+		//pTrafficPage->UpdateData(FALSE);
+		//if (theApp.curAccount.m_showTip)
+		//{
+		//	pTrafficPage->m_chkAutoDis.EnableWindow(TRUE);
+		//}
+		//else
+		//	pTrafficPage->m_chkAutoDis.EnableWindow(FALSE);
 	}
 	else
 	{
@@ -482,6 +483,7 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 			theApp.accounts.Add(theApp.curAccount);
 			UpdateComboBox();
 		}
+		SaveAccountToXML();
 		//else
 		//{
 		//	theApp.accounts[index]=theApp.curAccount;
@@ -578,6 +580,30 @@ void CLinkerPage::OnDestroy()
 	// TODO: 在此处添加消息处理程序代码
 
 	// 保存各项设置到xml文件
+	SaveAccountToXML();
+
+	theApp.configXml.SaveFile();
+}
+
+void CLinkerPage::OnBnClickedSaveAccount()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	// 保存当前用户设置
+	UpdateData(TRUE);
+	if (m_curAccountIndex>=0 && m_curAccountIndex<theApp.accounts.GetCount())
+	{
+		theApp.accounts[m_curAccountIndex]=theApp.curAccount;
+	}
+	if (m_chkSavePwd.GetCheck())
+	{
+		m_chkAutoCon.EnableWindow(TRUE);
+	}
+	else
+		m_chkAutoCon.EnableWindow(FALSE);
+}
+
+void CLinkerPage::SaveAccountToXML(void)
+{
 	UpdateData(TRUE);
 	// 用户名列表状态
 	int accountLen=theApp.configXml.GetAccountCount();
@@ -598,23 +624,4 @@ void CLinkerPage::OnDestroy()
 
 	// 断开按钮状态
 	theApp.configXml.SetDisBtnStatus(m_dis);
-
-	theApp.configXml.SaveFile();
-}
-
-void CLinkerPage::OnBnClickedSaveAccount()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	// 保存当前用户设置
-	UpdateData(TRUE);
-	if (m_curAccountIndex>=0 && m_curAccountIndex<theApp.accounts.GetCount())
-	{
-		theApp.accounts[m_curAccountIndex]=theApp.curAccount;
-	}
-	if (m_chkSavePwd.GetCheck())
-	{
-		m_chkAutoCon.EnableWindow(TRUE);
-	}
-	else
-		m_chkAutoCon.EnableWindow(FALSE);
 }

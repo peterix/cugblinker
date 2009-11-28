@@ -53,4 +53,5 @@ void CTextProgressCtrl::SetRange(short nUpper)
 {
 	m_nMax=nUpper;
 	CProgressCtrl::SetRange(0,nUpper);
+	Invalidate(TRUE);
 }
