@@ -393,7 +393,7 @@ UINT statistic_traffic(LPVOID pvParam)
 		DWORD BufferSize = 40;
 		UCHAR* PerfData = new UCHAR[BufferSize];
 		lRet = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
-			CString("SYSTEM\\ControlSet001\\Services\\Tcpip\\Parameters\\Interfaces\\")
+			CString("SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces\\")
 			+pTrafficPage->m_curNIC.Mid(12), 0, KEY_QUERY_VALUE, &hKey );
 
 		if( lRet == ERROR_SUCCESS )
