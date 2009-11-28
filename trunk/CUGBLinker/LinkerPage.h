@@ -75,4 +75,5 @@ public:
 
 	afx_msg void OnBnClickedSaveAccount();
 	void SaveAccountToXML(void);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
