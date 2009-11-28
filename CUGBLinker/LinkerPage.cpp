@@ -625,3 +625,18 @@ void CLinkerPage::SaveAccountToXML(void)
 	// 断开按钮状态
 	theApp.configXml.SetDisBtnStatus(m_dis);
 }
+
+BOOL CLinkerPage::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if( pMsg->message == WM_KEYDOWN )
+	{
+		if (pMsg->wParam == VK_RETURN)
+		{
+			OnBnClickedButtonCon();
+			return true;
+		}
+	}
+
+	return CPropertyPage::PreTranslateMessage(pMsg);
+}
