@@ -47,4 +47,5 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	CWinThread* pStatisticThread;
 	CTime oldTime;
+	void SetItemStat(void);
 };

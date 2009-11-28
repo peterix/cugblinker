@@ -90,16 +90,7 @@ BOOL CTrafficPage::OnInitDialog()
 	m_lblCurDev.SetText(NICDescription);
 	
 	// 设置界面初始化状态
-	if (theApp.curAccount.m_showTip)
-	{
-		m_chkAutoDis.EnableWindow(TRUE);
-	}
-	else
-		m_chkAutoDis.EnableWindow(FALSE);
-
-	// 设置进度条
-	m_proTotal.SetRange(theApp.curAccount.m_maxTraffic);
-	m_proTotal.SetPos(theApp.curAccount.m_curTraffic/1024/1024);
+	SetItemStat();
 
 	// 调用流量统计函数开始统计流量
 	pStatisticThread=AfxBeginThread(statistic_traffic, NULL);
@@ -140,6 +131,7 @@ void CTrafficPage::OnStnClickedStaticNic()
 		m_lblCurDev.SetWindowText(NICDescription);
 
 	m_lblCurDev.SetText(NICDescription);
+	theApp.configXml.SetCurNIC(m_curNIC);
 }
 
 void CTrafficPage::OnDestroy()
@@ -220,7 +212,23 @@ void CTrafficPage::OnTimer(UINT_PTR nIDEvent)
 
 	if (pLinkerPage->m_curAccountIndex>=0 && pLinkerPage->m_curAccountIndex<theApp.accounts.GetCount())
 	{
+		theApp.accounts[pLinkerPage->m_curAccountIndex].m_curTraffic=theApp.curAccount.m_curTraffic;
 		theApp.configXml.SetCurTraffic(theApp.curAccount);
 	}
 	CPropertyPage::OnTimer(nIDEvent);
+}
+
+void CTrafficPage::SetItemStat(void)
+{
+	UpdateData(FALSE);
+	if (theApp.curAccount.m_showTip)
+	{
+		m_chkAutoDis.EnableWindow(TRUE);
+	}
+	else
+		m_chkAutoDis.EnableWindow(FALSE);
+
+	// 设置进度条
+	m_proTotal.SetRange(theApp.curAccount.m_maxTraffic);
+	m_proTotal.SetPos(theApp.curAccount.m_curTraffic/1024/1024);
 }

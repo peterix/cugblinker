@@ -400,6 +400,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Dlls\drivers\npf.inf"
+				>
+			</File>
+			<File
+				RelativePath="..\Dlls\drivers\npf.sys"
+				>
+			</File>
+			<File
 				RelativePath="..\Dlls\npptools.dll"
 				>
 			</File>
