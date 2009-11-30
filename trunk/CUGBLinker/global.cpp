@@ -404,33 +404,40 @@ UINT statistic_traffic(LPVOID pvParam)
 				NULL,
 				PerfData,
 				&BufferSize );
-			BufferSize=40;
-			if (PerfData[0]==1)
+			if( lRet == ERROR_SUCCESS )
 			{
-				lRet=RegQueryValueEx( hKey,
-					TEXT("DhcpDefaultGateway"),
-					NULL,
-					NULL,
-					PerfData,
-					&BufferSize );
-			}
-			else
-			{
-				lRet=RegQueryValueEx( hKey,
-					TEXT("DefaultGateway"),
-					NULL,
-					NULL,
-					PerfData,
-					&BufferSize );
+				BufferSize=40;
+				if (PerfData[0]==1)
+				{
+					lRet=RegQueryValueEx( hKey,
+						TEXT("DhcpDefaultGateway"),
+						NULL,
+						NULL,
+						PerfData,
+						&BufferSize );
+				}
+				else
+				{
+					lRet=RegQueryValueEx( hKey,
+						TEXT("DefaultGateway"),
+						NULL,
+						NULL,
+						PerfData,
+						&BufferSize );
+				}
 			}
 		}
 		RegCloseKey( hKey );
 
-		for (int i=0;i<15;i++)
+		for (int i=0,j=0;i<15;i++,j++)
 		{
-			gatewayIP[i]=PerfData[i*2];
+			if (PerfData[j]=='\0')
+			{
+				j++;
+			}
+			gatewayIP[i]=PerfData[j];
 		}
-		if (CStringA(gatewayIP)!="")
+		if (CStringA(gatewayIP).Trim()!="")
 		{
 			// 获取网关mac地址
 			ULONG MacAddr[2];       /* for 6-byte hardware addresses */
@@ -450,12 +457,13 @@ UINT statistic_traffic(LPVOID pvParam)
 					sprintf(gatewayMAC+i*3,"%.2X",(int)bPhysAddr[i]);
 				}
 			}
-			if (CStringA(gatewayMAC)!="")
+			if (CStringA(gatewayMAC).Trim()!="")
 			{
 				filter+=CStringA("ether host ")+CStringA(gatewayMAC)+CStringA(" and not host ")+CStringA(gatewayIP)+CStringA(" and ");
 			}
 		}
 		filter+=CStringA(FILTER);
+		//AfxMessageBox(CString(filter));
 		//compile the filter
 		if (pcap_compile(fp, &fcode, filter, 1, netmask) <0 )
 		{
