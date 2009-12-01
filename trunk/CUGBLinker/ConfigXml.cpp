@@ -45,6 +45,9 @@ void CConfigXml::Init(void)
 		TiXmlElement* curNIC = new TiXmlElement("CurNIC");
 		curNIC->SetAttribute("value","");
 		common->LinkEndChild(curNIC);
+		TiXmlElement* date = new TiXmlElement("Date");
+		date->SetAttribute("value","");
+		common->LinkEndChild(date);
 		TiXmlElement* accounts = new TiXmlElement("Accounts");
 		root->LinkEndChild(accounts);
 		doc.SaveFile();
@@ -213,86 +216,21 @@ void CConfigXml::SetCurTraffic(CAccountInfo& accountInfo)
 	}
 }
 
-//double CConfigXml::GetCurTraffic(int i)
-//{
-//	double curTraffic;
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-//	if (account)
-//	{
-//		account->Attribute("curTraffic",&curTraffic);
-//	}
-//	return curTraffic;
-//}
-//
-//void CConfigXml::SetMaxTraffic(int i,double maxTraffic)
-//{
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-//	if (account)
-//	{
-//		account->SetDoubleAttribute("maxTraffic",maxTraffic);
-//	}
-//
-//}
-//
-//double CConfigXml::GetMaxTraffic(int i)
-//{
-//	double maxTraffic;
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-//	if (account)
-//	{
-//		account->Attribute("maxTraffic",&maxTraffic);
-//	}
-//	return maxTraffic;
-//
-//}
-//
-//void CConfigXml::SetShowTip(int i,int showTip)
-//{
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-//	if (account)
-//	{
-//		account->SetAttribute("showTip",showTip);
-//	}
-//
-//}
-//
-//int CConfigXml::GetShowTip(int i)
-//{
-//	int showTip;
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-//	if (account)
-//	{
-//		account->Attribute("showTip",&showTip);
-//	}
-//	return showTip;
-//
-//}
-//
-//void CConfigXml::SetAutoDis(int i,int autoDis)
-//{
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-//	if (account)
-//	{
-//		account->SetAttribute("autoDis",autoDis);
-//	}
-//
-//}
-//
-//int CConfigXml::GetAutoDis(int i)
-//{
-//	int autoDis;
-//	TiXmlHandle hDoc(&doc);
-//	TiXmlElement* account=hDoc.FirstChild("CUGBLinker").FirstChild("Accounts").Child(i).ToElement();
-//	if (account)
-//	{
-//		account->Attribute("autoDis",&autoDis);
-//	}
-//	return autoDis;
-//
-//}
+void CConfigXml::SetDate(CString date)
+{
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* disBtnStatus=hDoc.FirstChild("CUGBLinker").FirstChild("Common").FirstChild("Date").ToElement();
+	CStringA temp=CStringA(date);
+	disBtnStatus->SetAttribute("value",temp.GetBuffer());
+	temp.ReleaseBuffer();
+}
+
+CString CConfigXml::GetDate()
+{
+	CString date;
+	TiXmlHandle hDoc(&doc);
+	TiXmlElement* disBtnStatus=hDoc.FirstChild("CUGBLinker").FirstChild("Common").FirstChild("Date").ToElement();
+	date=disBtnStatus->Attribute("value");
+	date.ReleaseBuffer();
+	return date;
+}

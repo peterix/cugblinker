@@ -214,7 +214,7 @@ void CTrafficButton::PreSubclassWindow()
 
 	TrafficEntries = TGSize.cx / plotgranularity;
 	TrafficStats = new float[TrafficEntries+1];
-	for(DWORD x=0; x<TrafficEntries; x++)
+	for(DWORD x=0; x<=TrafficEntries; x++)
 		TrafficStats[x]	= 0.0;
 
 	CRgn rectRgn, ellRgn, finalRgn;

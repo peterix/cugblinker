@@ -30,11 +30,7 @@ public:
 	CString GetCurNIC(void);
 
 	void SetCurTraffic(CAccountInfo& accountInfo);
-	//double GetCurTraffic(int i);
-	//void SetMaxTraffic(int i,double maxTraffic);
-	//double GetMaxTraffic(int i);
-	//void SetShowTip(int i,int showTip);
-	//int GetShowTip(int i);
-	//void SetAutoDis(int i,int autoDis);
-	//int GetAutoDis(int i);
+
+	void SetDate(CString date);
+	CString GetDate();
 };

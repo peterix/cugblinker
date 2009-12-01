@@ -308,7 +308,7 @@ void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u
 	u_int delay;
 	LARGE_INTEGER Bps,Pps;
 #ifdef _DEBUG
-	//AfxMessageBox(L"有速度！");
+	AfxMessageBox(L"该有速度！");
 #endif
 
 	/* Calculate the delay in microseconds from the last sample. */
@@ -504,6 +504,9 @@ UINT statistic_traffic(LPVOID pvParam)
 			pcap_close(fp);
 			return 1;
 		}
+#ifdef _DEBUG
+		AfxMessageBox(L"compile filter");
+#endif
 
 		//set the filter
 		if (pcap_setfilter(fp, &fcode)<0)
@@ -515,6 +518,9 @@ UINT statistic_traffic(LPVOID pvParam)
 			pcap_close(fp);
 			return 1;
 		}
+#ifdef _DEBUG
+		AfxMessageBox(L"set filter");
+#endif
 
 		/* Put the interface in statstics mode */
 		if (pcap_setmode(fp, MODE_STAT)<0)
@@ -526,6 +532,9 @@ UINT statistic_traffic(LPVOID pvParam)
 			pcap_close(fp);
 			return 1;
 		}
+#ifdef _DEBUG
+		AfxMessageBox(L"set mode");
+#endif
 
 		/* Start the main loop */
 		pcap_loop(fp, 0, dispatcher_handler, (PUCHAR)&st_ts);
