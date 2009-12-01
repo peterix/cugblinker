@@ -14,6 +14,7 @@ IMPLEMENT_DYNAMIC(CTrafficPage, CPropertyPage)
 CTrafficPage::CTrafficPage()
 	: CPropertyPage(CTrafficPage::IDD)
 	, m_curNIC(_T(""))
+	, m_date(_T(""))
 	, pLinkerPage(NULL)
 	, pStatisticThread(NULL)
 	, oldTime(0)
@@ -89,6 +90,7 @@ BOOL CTrafficPage::OnInitDialog()
 		m_lblCurDev.SetWindowText(NICDescription);
 	m_lblCurDev.SetText(NICDescription);
 	
+	m_date=theApp.configXml.GetDate();
 	// 设置界面初始化状态
 	SetItemStat();
 
@@ -141,6 +143,9 @@ void CTrafficPage::OnDestroy()
 	// TODO: 在此处添加消息处理程序代码
 	UpdateData(TRUE);
 	theApp.configXml.SetCurNIC(m_curNIC);
+	CTime curTime=CTime::GetCurrentTime();
+	CString curDate=curTime.Format(L"%Y-%m-%d");
+	theApp.configXml.SetDate(curDate);
 }
 
 CString CTrafficPage::GetNICDescription(CString nic)
@@ -202,6 +207,7 @@ void CTrafficPage::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	CTime curTime=CTime::GetCurrentTime();
+
 	if (curTime.GetYear()>oldTime.GetYear() ||
 		curTime.GetMonth()>oldTime.GetMonth() ||
 		curTime.GetDay()>oldTime.GetDay())

@@ -30,6 +30,7 @@ public:
 	CTipStatic m_lblCurDev;
 	// 当前统计流量的网卡
 	CString m_curNIC;
+	CString m_date;
 	CEdit m_txtMaxTraffic;
 	CButton m_chkShowTip;
 	CButton m_chkAutoDis;

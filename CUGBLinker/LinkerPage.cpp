@@ -292,10 +292,17 @@ void CLinkerPage::SetItemText(void)
 		else
 			m_chkAutoCon.EnableWindow(FALSE);
 
+		CTime curTime=CTime::GetCurrentTime();
+		CString curDate=curTime.Format(L"%Y-%m-%d");
+		if (curDate!=theApp.configXml.GetDate())
+		{
+			theApp.curAccount.m_curTraffic=0;
+		}
 		// 初始化流量界面
 		CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
 		CTrafficPage* pTrafficPage=(CTrafficPage*)&(pMainWnd->m_trafficPage);
 		pTrafficPage->SetItemStat();
+
 		//pTrafficPage->UpdateData(FALSE);
 		//if (theApp.curAccount.m_showTip)
 		//{
@@ -480,6 +487,7 @@ LRESULT CLinkerPage::OnUpdateInfo(WPARAM wParam, LPARAM lParam)
 		int index=m_cboID.FindStringExact(-1,theApp.curAccount.m_username);
 		if (index==CB_ERR)
 		{
+			theApp.curAccount.m_curTraffic=0;
 			theApp.accounts.Add(theApp.curAccount);
 			UpdateComboBox();
 		}
