@@ -307,6 +307,9 @@ void dispatcher_handler(u_char *state, const struct pcap_pkthdr *header, const u
 	struct timeval *old_ts = (struct timeval *)state;
 	u_int delay;
 	LARGE_INTEGER Bps,Pps;
+#ifdef _DEBUG
+	//AfxMessageBox(L"有速度！");
+#endif
 
 	/* Calculate the delay in microseconds from the last sample. */
 	/* This value is obtained from the timestamp that the associated with the sample. */
@@ -386,11 +389,13 @@ UINT statistic_traffic(LPVOID pvParam)
 		netmask=0xffffff; 
 
 		// 配置过滤器，需读取本机网关，并获得网关mac地址
+		char ipAddr[16]={0};
 		char gatewayIP[16]={0};
 		char gatewayMAC[18]={0};
 		HKEY hKey;
 		LONG lRet;
 		DWORD BufferSize = 40;
+		UCHAR* IPPerfData = new UCHAR[BufferSize];
 		UCHAR* PerfData = new UCHAR[BufferSize];
 		lRet = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
 			CString("SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces\\")
@@ -410,6 +415,12 @@ UINT statistic_traffic(LPVOID pvParam)
 				if (PerfData[0]==1)
 				{
 					lRet=RegQueryValueEx( hKey,
+						TEXT("DhcpIPAddress"),
+						NULL,
+						NULL,
+						IPPerfData,
+						&BufferSize );
+					lRet=RegQueryValueEx( hKey,
 						TEXT("DhcpDefaultGateway"),
 						NULL,
 						NULL,
@@ -418,6 +429,12 @@ UINT statistic_traffic(LPVOID pvParam)
 				}
 				else
 				{
+					lRet=RegQueryValueEx( hKey,
+						TEXT("IPAddress"),
+						NULL,
+						NULL,
+						IPPerfData,
+						&BufferSize );
 					lRet=RegQueryValueEx( hKey,
 						TEXT("DefaultGateway"),
 						NULL,
@@ -429,39 +446,50 @@ UINT statistic_traffic(LPVOID pvParam)
 		}
 		RegCloseKey( hKey );
 
-		for (int i=0,j=0;i<15;i++,j++)
+		for (int i=0,j=0,k=0; i<15; i++,j++,k++)
 		{
 			if (PerfData[j]=='\0')
 			{
 				j++;
 			}
 			gatewayIP[i]=PerfData[j];
+			if (IPPerfData[k]=='\0')
+			{
+				k++;
+			}
+			ipAddr[i]=IPPerfData[k];
 		}
-		if (CStringA(gatewayIP).Trim()!="")
+		CString IP(ipAddr);
+		IP=IP.Trim();
+		if (IP.Find(L"10.")==0 || IP.Find(L"172.")==0 || IP.Find(L"192.168.")==0)
 		{
-			// 获取网关mac地址
-			ULONG MacAddr[2];       /* for 6-byte hardware addresses */
-			ULONG PhysAddrLen = 6;  /* default to length of six bytes */
-			memset(&MacAddr, 0xff, sizeof (MacAddr));
-			SendARP(inet_addr(gatewayIP), 0, &MacAddr, &PhysAddrLen);
+			if (CStringA(gatewayIP).Trim()!="")
+			{
+				// 获取网关mac地址
+				ULONG MacAddr[2];       /* for 6-byte hardware addresses */
+				ULONG PhysAddrLen = 6;  /* default to length of six bytes */
+				memset(&MacAddr, 0xff, sizeof (MacAddr));
+				SendARP(inet_addr(gatewayIP), 0, &MacAddr, &PhysAddrLen);
 
-			BYTE *bPhysAddr = (BYTE *) & MacAddr;
-			for (int i = 0; i < (int)PhysAddrLen; i++) 
-			{
-				if (i<(int)PhysAddrLen-1)
+				BYTE *bPhysAddr = (BYTE *) & MacAddr;
+				for (int i = 0; i < (int)PhysAddrLen; i++) 
 				{
-					sprintf(gatewayMAC+i*3,"%.2X:",(int)bPhysAddr[i]);
+					if (i<(int)PhysAddrLen-1)
+					{
+						sprintf(gatewayMAC+i*3,"%.2X:",(int)bPhysAddr[i]);
+					}
+					else
+					{
+						sprintf(gatewayMAC+i*3,"%.2X",(int)bPhysAddr[i]);
+					}
 				}
-				else
+				if (CStringA(gatewayMAC).Trim()!="")
 				{
-					sprintf(gatewayMAC+i*3,"%.2X",(int)bPhysAddr[i]);
+					filter+=CStringA("ether host ")+CStringA(gatewayMAC)+CStringA(" and not host ")+CStringA(gatewayIP)+CStringA(" and ");
 				}
-			}
-			if (CStringA(gatewayMAC).Trim()!="")
-			{
-				filter+=CStringA("ether host ")+CStringA(gatewayMAC)+CStringA(" and not host ")+CStringA(gatewayIP)+CStringA(" and ");
 			}
 		}
+
 		filter+=CStringA(FILTER);
 #ifdef _DEBUG
 		AfxMessageBox(CString(filter));
