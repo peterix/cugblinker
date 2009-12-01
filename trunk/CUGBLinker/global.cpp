@@ -463,7 +463,9 @@ UINT statistic_traffic(LPVOID pvParam)
 			}
 		}
 		filter+=CStringA(FILTER);
-		//AfxMessageBox(CString(filter));
+#ifdef _DEBUG
+		AfxMessageBox(CString(filter));
+#endif
 		//compile the filter
 		if (pcap_compile(fp, &fcode, filter, 1, netmask) <0 )
 		{
