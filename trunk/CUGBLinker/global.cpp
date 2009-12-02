@@ -372,7 +372,8 @@ UINT statistic_traffic(LPVOID pvParam)
 
 	while(1) // 切换统计网卡后，对新网卡继续统计流量 
 	{
-		CStringA filter="";// 过滤器
+		CStringA filter=CStringA(FILTER);// 过滤器
+
 		/* Open the output adapter */
 		CStringA temp=CStringA(pTrafficPage->m_curNIC);
 		if ( (fp= pcap_open(temp.GetBuffer(), 100, PCAP_OPENFLAG_NOCAPTURE_LOCAL, 1000, NULL, errbuf) ) == NULL)
@@ -485,12 +486,11 @@ UINT statistic_traffic(LPVOID pvParam)
 				}
 				if (CStringA(gatewayMAC).Trim()!="")
 				{
-					filter+=CStringA("ether host ")+CStringA(gatewayMAC)+CStringA(" and not host ")+CStringA(gatewayIP)+CStringA(" and ");
+					filter+=CStringA(" and ether host ")+CStringA(gatewayMAC)+CStringA(" and not host ")+CStringA(gatewayIP);
 				}
 			}
 		}
 
-		filter+=CStringA(FILTER);
 #ifdef _DEBUG
 		AfxMessageBox(CString(filter));
 #endif
