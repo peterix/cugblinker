@@ -146,6 +146,8 @@ void CTrafficPage::OnDestroy()
 	CTime curTime=CTime::GetCurrentTime();
 	CString curDate=curTime.Format(L"%Y-%m-%d");
 	theApp.configXml.SetDate(curDate);
+	
+	theApp.configXml.SaveFile();
 }
 
 CString CTrafficPage::GetNICDescription(CString nic)
