@@ -7,6 +7,7 @@
 #define MyAppURL "http://code.google.com/p/cugblinker/"
 #define MyAppExeName "CUGBLinker.exe"
 
+
 [Setup]
 ; 注: AppId的值为单独标识该应用程序。
 ; 不要为其他安装程序使用相同的AppId值。
@@ -25,6 +26,7 @@ OutputDir=.
 OutputBaseFilename=CUGBLinker
 Compression=lzma
 SolidCompression=yes
+ArchitecturesInstallIn64BitMode=x64 ia64
 
 [Languages]
 Name: "chinesesimp"; MessagesFile: "compiler:Default.isl"
@@ -34,13 +36,19 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: ".\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\Dlls\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\Dlls\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\Dlls\npptools.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\Dlls\pthreadVC.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\Dlls\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist
-Source: ".\Dlls\drivers\npf.inf"; DestDir: "{win}\inf"; Flags: ignoreversion
+Source: ".\Release\dlls\npptools.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Release\dlls\pthreadVC.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Release\dlls\drivers\npf.inf"; DestDir: "{win}\inf"; Flags: ignoreversion
+; x86版本
+Source: ".\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: not IsWin64
+Source: ".\Release\dlls\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not IsWin64
+Source: ".\Release\dlls\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not IsWin64
+Source: ".\Release\dlls\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist; Check: not IsWin64
+; x64版本
+Source: ".\x64\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: IsWin64
+Source: ".\x64\Release\dlls\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: IsWin64
+Source: ".\x64\Release\dlls\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: IsWin64
+Source: ".\x64\Release\dlls\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist; Check: IsWin64
 ; 注意: 不要在任何共享系统文件上使用“Flags: ignoreversion”
 
 [Icons]
