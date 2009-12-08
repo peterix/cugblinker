@@ -215,6 +215,7 @@ void CTrafficPage::OnTimer(UINT_PTR nIDEvent)
 		curTime.GetDay()>oldTime.GetDay())
 	{
 		theApp.curAccount.m_curTraffic=0;
+		oldTime=curTime;
 	}
 	m_proTotal.SetPos(theApp.curAccount.m_curTraffic/1024/1024);
 
