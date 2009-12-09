@@ -40,20 +40,21 @@ Source: ".\Release\dlls\npptools.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\Release\dlls\pthreadVC.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\Release\dlls\drivers\npf.inf"; DestDir: "{win}\inf"; Flags: ignoreversion
 ; x86版本
-Source: ".\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: not IsWin64
-Source: ".\Release\dlls\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not IsWin64
-Source: ".\Release\dlls\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not IsWin64
-Source: ".\Release\dlls\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist; Check: not IsWin64
+Source: ".\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: ".\Release\dlls\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: ".\Release\dlls\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: ".\Release\dlls\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist; Check: not Is64BitInstallMode
 ; x64版本
-Source: ".\x64\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: IsWin64
-Source: ".\x64\Release\dlls\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: IsWin64
-Source: ".\x64\Release\dlls\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: IsWin64
-Source: ".\x64\Release\dlls\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist; Check: IsWin64
+Source: ".\x64\Release\CUGBLinker.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: ".\x64\Release\dlls\wpcap.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: ".\x64\Release\dlls\Packet.dll"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: ".\x64\Release\dlls\drivers\npf.sys"; DestDir: "{sys}\drivers"; Flags: onlyifdoesntexist; Check: Is64BitInstallMode
 ; 注意: 不要在任何共享系统文件上使用“Flags: ignoreversion”
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
+Name: "{group}\下载最新版本"; Filename: "{#MyAppURL}"; WorkingDir: "{app}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; WorkingDir: "{app}"
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon; WorkingDir: "{app}"
 
