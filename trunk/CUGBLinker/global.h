@@ -19,7 +19,7 @@
 #define GRIDSCROLLXSPEED -1		// How fast grid scrolls in x direction
 #define GRIDSCROLLYSPEED 0		// How fast grid scrolls in y direction
 
-#define FILTER "not src net (202.204.96/20 or 219.225.32/19 or 121.194.80/20)"// or not dst net (202.204.96/20 or 219.225.32/19 or 121.194.80/20)"	// 过滤校内IP
+//#define FILTER "not src net (202.204.96/20 or 219.225.32/19 or 121.194.80/20)"// or not dst net (202.204.96/20 or 219.225.32/19 or 121.194.80/20)"	// 过滤校内IP
 
 extern double curSpeed;
 extern double maxSpeed;

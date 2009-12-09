@@ -158,7 +158,7 @@ HCURSOR CCUGBLinkerDlg::OnQueryDragIcon()
 void CCUGBLinkerDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	if (nID==SC_MINIMIZE /*|| SC_CLOSE*/) 
+	if (nID==SC_MINIMIZE || nID==SC_CLOSE) 
 	{ 
 		ShowWindow(SW_HIDE);//隐藏主窗口 
 		return;
