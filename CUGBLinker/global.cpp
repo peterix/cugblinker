@@ -372,7 +372,7 @@ UINT statistic_traffic(LPVOID pvParam)
 
 	while(1) // 切换统计网卡后，对新网卡继续统计流量 
 	{
-		CStringA filter=CStringA(FILTER);// 过滤器
+		CStringA filter="";// 过滤器
 
 		/* Open the output adapter */
 		CStringA temp=CStringA(pTrafficPage->m_curNIC);
@@ -460,9 +460,19 @@ UINT statistic_traffic(LPVOID pvParam)
 			}
 			ipAddr[i]=IPPerfData[k];
 		}
-		CString IP(ipAddr);
+		CStringA IP(ipAddr);
 		IP=IP.Trim();
-		if (IP.Find(L"10.")==0 || IP.Find(L"172.")==0 || IP.Find(L"192.168.")==0)
+		filter+="not (";
+		filter+="src net (202.204.96/20 or 219.225.32/19 or 121.194.80/20)";
+		if (IP!="")
+		{
+			filter+=" and dst host "+IP+")";
+			filter+=" and not (src host ";
+			filter+=IP;
+			filter+=" and dst net (202.204.96/20 or 219.225.32/19 or 121.194.80/20)";
+		}
+		filter+=")";
+		if (IP.Find("10.")==0 || IP.Find("172.")==0 || IP.Find("192.168.")==0)
 		{
 			if (CStringA(gatewayIP).Trim()!="")
 			{
