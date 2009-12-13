@@ -223,6 +223,7 @@ void CTrafficPage::OnTimer(UINT_PTR nIDEvent)
 	{
 		theApp.accounts[pLinkerPage->m_curAccountIndex].m_curTraffic=theApp.curAccount.m_curTraffic;
 		theApp.configXml.SetCurTraffic(theApp.curAccount);
+		theApp.configXml.SaveFile();
 	}
 	CPropertyPage::OnTimer(nIDEvent);
 }
