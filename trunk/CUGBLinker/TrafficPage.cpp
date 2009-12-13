@@ -218,6 +218,13 @@ void CTrafficPage::OnTimer(UINT_PTR nIDEvent)
 		oldTime=curTime;
 	}
 	m_proTotal.SetPos(theApp.curAccount.m_curTraffic/1024/1024);
+	CCUGBLinkerDlg* pMainWnd=(CCUGBLinkerDlg*)theApp.m_pMainWnd;
+//	_tcscpy_s(pMainWnd->nid.szTip,L"当前流量");
+	swprintf(pMainWnd->nid.szTip,L"流量信息(MB): %d/%d(%.1f%%)",
+		(int)(theApp.curAccount.m_curTraffic/1024/1024),theApp.curAccount.m_maxTraffic,
+		100*theApp.curAccount.m_curTraffic/1024/1024/theApp.curAccount.m_maxTraffic);
+	pMainWnd->nid.uFlags=NIF_TIP ; 
+	Shell_NotifyIcon(NIM_MODIFY, &pMainWnd->nid);
 
 	if (pLinkerPage->m_curAccountIndex>=0 && pLinkerPage->m_curAccountIndex<theApp.accounts.GetCount())
 	{
