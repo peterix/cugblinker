@@ -65,7 +65,7 @@ UINT Connect(LPVOID pvParam)
 	}
 
 	// 接收消息
-
+	Sleep(100); //防止接受不完整
 	CStringA recStr('\0',3000);
 	int recLen;
 	if((recLen=m_pSocket->Receive(recStr.GetBuffer(),3000)) == SOCKET_ERROR)

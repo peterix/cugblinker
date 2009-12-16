@@ -147,8 +147,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,1,0,2
- PRODUCTVERSION 2,1,0,2
+ FILEVERSION 2,1,0,3
+ PRODUCTVERSION 2,1,0,3
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -165,12 +165,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "中国地质大学（北京）"
             VALUE "FileDescription", "地大网关连接器"
-            VALUE "FileVersion", "2.1.0.2"
+            VALUE "FileVersion", "2.1.0.3"
             VALUE "InternalName", "CUGBLinker.exe"
             VALUE "LegalCopyright", "中国地质大学（北京）。保留所有权利。"
             VALUE "OriginalFilename", "CUGBLinker.exe"
             VALUE "ProductName", "CUGBLinker"
-            VALUE "ProductVersion", "2.1.0.2"
+            VALUE "ProductVersion", "2.1.0.3"
         END
     END
     BLOCK "VarFileInfo"
